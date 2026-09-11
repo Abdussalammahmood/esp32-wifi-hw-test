@@ -107,6 +107,10 @@ idf.py --version          # must print: ESP-IDF v5.5.4
    python wifi_hw_test.py --config config/<your-run>.json --out results/
    ```
    Add `--erase-nvs` if association hangs. Exit code 0 = all PASS, 1 = any FAIL.
+   A full run takes ~4 min (the UDP offered-load sweep alone is ~1 min and is reference-only
+   information). `--fast` (tcp 8 s, udp 6 s, ping 6 s, no sweep) gives a PASS/FAIL in ~2.5 min — use it
+   to smoke-test a board or a fix, **not** for the number you report: the shorter windows are noisier
+   and can graze a floor (seen: TCP RX 14.98 vs the 15 Mbit/s floor on a healthy board).
 5. **Read the report** — `results/<timestamp>_<name>.md`. It contains the verdict table, the
    scan/RSSI comparison against the reference, the link data and the throughput table.
 6. **Report back to the user** in this shape:
@@ -143,6 +147,8 @@ with the offer it was measured at, and never hand-copy a `-b 20` result as if it
 | UDP plateaus well below 30 Mbit/s **even at `-b 40`** | real link ceiling — compare with the reference board and report both |
 | AP count low or median RSSI delta > 8 dB vs reference | RF path fault (antenna/matching/FEM/module) |
 | **0 APs and no `SCAN_DONE` line**, or console output stops mid-line | the chip **reset during the scan** — read the reset reason, look for `E BOD: Brownout detector was triggered`. That is a **power** fault, not an antenna one |
+| **0 APs but association/iperf work fine** | not a radio fault: the driver refused to scan (`STA is connecting, scan are not allowed!` / `ESP_ERR_WIFI_STATE`, `DONE.STA_SCAN_START,FAIL.12294`). The board was left associated by the previous run. Fixed in the harness (`sta_disconnect` before every scan) — if you see it, you are running an old copy |
+| AP-count ratio just under the floor while the median RSSI delta passes (e.g. 13 vs 22 APs = 59% vs 60%) | the reference's antenna out-hears the DUT, so the *count* ratio is not a valid discriminator for a mixed-antenna pair. Judge on the shared-BSSID RSSI delta, or run the same board as the DUT to get a conclusive number |
 | Throughput collapses in one direction only (e.g. RX ~1.5 Mbit/s, TX fine) | check for resets/brownout first; a supply that sags under load looks like an RF fault |
 | Association/ping fine, throughput poor and one-sided | RF retries — layout, interference, power integrity |
 | Panics in wifi/supplicant (`rsn_selector_to_bitfield`, `cnx_get_authtype_strength`) | firmware/library issue, not RF — do not blame the antenna |
@@ -160,6 +166,15 @@ throughput numbers passed.
    (VS Code Monitor, idf.py monitor, PuTTY). Close it; verify with `mode COMx`.
 2. **Association hangs, console stops responding** → stale WiFi config in NVS:
    rerun with `--erase-nvs` (erases `0x9000`/`0x6000`). This fixed a board that would not associate.
+   **Reruns should start from a clean state** — a finished run leaves the DUT associated, and the next
+   run's scan is refused until it is disconnected or the state is erased. The harness now sends
+   `sta_disconnect` before each scan, and `--erase-nvs` is the more thorough option.
+2b. **`esptool` cannot connect at all** (`Failed to connect … Serial data stream stopped: Possible
+   serial noise or corruption`) → the debug adapter's **DTR/RTS are not reaching BOOT0/EN**. Seen on
+   the Astra board after the power wiring was changed. Consequences: `--erase-nvs` fails, `idf.py flash`
+   fails (fix the wiring, or enter download mode by holding BOOT0/GPIO0 low through a reset), and the
+   harness's chip/MAC probe silently falls back to reading the console banner. The test itself still
+   works — it only needs the console UART.
 3. **No console output after flashing** → the capture asserted DTR/RTS. On boards with direct
    `RTS→EN` / `DTR→BOOT0` wiring: DTR=False + RTS=False = run, DTR=True + RTS=False = download mode,
    RTS=True = held in reset. The harness already releases both.

@@ -46,7 +46,30 @@ cd firmware/iperf-esp32c6 && idf.py set-target esp32c6 && idf.py -p COM10 flash 
 cp config/astra_s3_vs_c6.json config/my_board.json    # set ports, names, chips
 python wifi_hw_test.py --config config/my_board.json --out results/
 # exit 0 = every verdict PASS; report written to results/<timestamp>_<name>.md
+
+python wifi_hw_test.py --config config/my_board.json --out results/ --fast   # ~2.5 min, smoke check
+python wifi_hw_test.py --config config/my_board.json --out results/ --erase-nvs   # clean rerun
 ```
+
+A full run takes **~4 min**, and roughly a third of that is padding you can skip:
+
+| Phase | Full profile | `--fast` |
+|---|---|---|
+| UDP offered-load sweep (reference-only info) | ~60 s | skipped |
+| TCP TX + RX | 2 × 15 s | 2 × 8 s |
+| UDP TX + RX | 2 × 10 s | 2 × 6 s |
+| ping | 12 s | 6 s |
+| total | **~240 s** | **~165 s** |
+
+`--fast` is for a quick PASS/FAIL while iterating — its shorter windows are noisier and can graze a
+floor (a healthy board measured TCP RX 14.98 against the 15 Mbit/s floor). Use the default profile for
+the number you report.
+
+**Reruns:** a finished run leaves the board associated, and the driver then refuses to scan
+(`STA is connecting, scan are not allowed!` → `ESP_ERR_WIFI_STATE`), which looks like a dead antenna.
+The harness now sends `sta_disconnect` before every scan; `--erase-nvs` (or `"erase_nvs": true` in the
+config) erases the stored Wi-Fi config instead — recommended when you rerun, and it needs `esptool` to
+reach the board (see the gotcha about DTR/RTS).
 
 - Different chips? Build a firmware copy with `tools/prepare_firmware.py`.
 - Association hangs? Add `--erase-nvs` (stale WiFi config).

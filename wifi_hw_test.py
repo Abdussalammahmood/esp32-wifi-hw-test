@@ -229,7 +229,7 @@ class WifiTest:
         ('iperf is already running'), so abort any running one before the next test."""
         for k in keys:
             c = self.dut if k == "dut" else self.ref
-            c.send("iperf --abort", 1.5)
+            c.send("iperf --abort", 0.8)
 
     def identify(self, board_key: str) -> dict:
         """Board identity from the esptool binary if configured, else from the console.
@@ -285,9 +285,35 @@ class WifiTest:
         c = self.dut if board_key == "dut" else self.ref
         cmd = self.cfg.get("scan_command", "scan")
         self.log("SCAN on %s (%s)" % (board_key, c.port))
+        c.drain(1)
+        # A previous run leaves the board associated and its station auto-reconnecting, and the
+        # driver refuses to scan while the station is connecting:
+        #   wifi:sta_scan: STA is connecting, scan are not allowed!
+        #   WIFI: DONE.STA_SCAN_START,FAIL.12294,ESP_ERR_WIFI_STATE
+        # That produced "0 APs" verdicts that looked like an antenna fault, so disconnect first.
+        c.send("sta_disconnect", 2)
         c.send("wifi_mode sta", 1.5)
-        lines = c.send(cmd, self.dur.get("scan", 15))
-        return parse_scan(lines)
+        lines = self._scan_once(c, cmd)
+        scan = parse_scan(lines)
+        if not scan.get("ap_count"):
+            print("!! scan came back empty on %s - retrying after a longer disconnect" % board_key,
+                  flush=True)
+            c.send("sta_disconnect", 3)
+            lines = self._scan_once(c, cmd)
+            scan = parse_scan(lines)
+        return scan
+
+    def _scan_once(self, c, cmd: str) -> list[str]:
+        """Fire the scan, then return as soon as it reports SCAN_DONE (or the budget runs out).
+
+        The old code slept the whole configured scan time even though a scan finishes in ~2.5 s.
+        """
+        budget = self.dur.get("scan", 15)
+        c.send(cmd, 0.4)                                     # command echo only
+        ok, lines = c.wait_for(r"SCAN_DONE|STA_SCAN_START,\s*FAIL", budget)
+        if not ok:
+            lines += c.drain(1)
+        return lines
 
     def setup_softap(self, board_key: str) -> None:
         c = self.dut if board_key == "dut" else self.ref
@@ -707,7 +733,11 @@ def main() -> int:
     ap.add_argument("--thresholds", default=None, help="override thresholds json")
     ap.add_argument("--out", default="results", help="output directory for the report")
     ap.add_argument("--erase-nvs", action="store_true",
-                    help="erase the DUT NVS partition before testing (fixes stale-config hangs)")
+                    help="erase the DUT NVS partition before testing (fixes stale-config hangs). "
+                         "Recommended for reruns; also available as \"erase_nvs\": true in the config")
+    ap.add_argument("--fast", action="store_true",
+                    help="quick pass: tcp 8s, udp 6s, ping 6s, no UDP sweep. NOT comparable with the "
+                         "committed reference run - use it to get a fast PASS/FAIL")
     ap.add_argument("--name", default=None, help="report name override")
     ap.add_argument("--list-ports", action="store_true", help="list serial ports and exit")
     ap.add_argument("--quiet", action="store_true", help="do not echo raw console lines")
@@ -737,7 +767,13 @@ def main() -> int:
     if args.name:
         cfg["name"] = args.name
 
-    if args.erase_nvs:
+    if args.fast:
+        cfg.setdefault("durations", {}).update({"scan": 10, "ping": 6, "tcp": 8, "udp": 6})
+        cfg["udp_bitrates"] = []
+        print("!! --fast: shortened durations and no UDP sweep - do not compare with results/*.md",
+              flush=True)
+
+    if args.erase_nvs or cfg.get("erase_nvs"):
         tool = cfg.get("esptool", {})
         cmd = [tool.get("python", sys.executable), tool.get("path", "esptool.py"),
                "--chip", cfg["dut"].get("chip", "auto"), "-p", cfg["dut"]["port"],

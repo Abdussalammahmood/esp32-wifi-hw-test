@@ -184,7 +184,16 @@ That difference is the whole reason for the `-b` rule in §C.
 5. **`-b` takes a bare number** (`-b 40`, not `40M`) **and it is the offered load** — offer less than
    the link can carry and the result is capped by your own offer (§C). Always `iperf --abort` before a
    new role.
-6. **Same room, same time** — RSSI and throughput are only comparable within one session.
+6. **Reruns must start from a clean Wi-Fi state.** A finished test leaves the board associated, and
+   `scan` is then refused with `wifi:sta_scan: STA is connecting, scan are not allowed!` +
+   `DONE.STA_SCAN_START,FAIL.12294,ESP_ERR_WIFI_STATE` — which looks exactly like a dead antenna
+   ("Found 0 APs"). Send `sta_disconnect` before scanning, or erase the stored config first:
+   `esptool.py --chip esp32s3 -p COM8 erase_region 0x9000 0x6000`.
+7. **`esptool` needs DTR/RTS to reach BOOT0/EN.** If your debug adapter only carries TX/RX/GND
+   (or you changed the power wiring), flashing and the NVS erase fail with
+   `Failed to connect … Serial data stream stopped` — the console test still runs, but you cannot
+   re-flash until the reset/boot lines are connected.
+8. **Same room, same time** — RSSI and throughput are only comparable within one session.
 
 ## 5. Full captured output of the key commands
 

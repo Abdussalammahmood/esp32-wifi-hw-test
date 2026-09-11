@@ -1,26 +1,22 @@
 {
   "name": "astra-s3-vs-c6-devkit",
   "comment": "DUT = Astra custom ESP32-S3R8 board (chip antenna). Reference = ESP32-C6-DevKitC-1. No real network credentials are needed: the reference board creates its own SoftAP.",
-
   "dut": {
     "name": "Astra custom board (ESP32-S3R8, chip antenna)",
     "port": "COM8",
     "chip": "esp32s3"
   },
-
   "reference": {
     "name": "ESP32-C6-DevKitC-1 (known good)",
     "port": "COM10",
     "chip": "esp32c6"
   },
-
   "ap": {
     "ssid": "WIFI_HW_TEST",
     "password": "test12345",
     "ip": "192.168.4.1",
     "pmf": "off"
   },
-
   "scan_command": "scan",
   "tests": {
     "scan": true,
@@ -31,7 +27,6 @@
     "udp_tx": true,
     "udp_rx": true
   },
-
   "durations": {
     "scan": 15,
     "ping": 12,
@@ -40,14 +35,15 @@
     "udp": 10,
     "udp_bitrate": 40
   },
-
   "_udp_bitrate_note": "udp_bitrate is the value passed to iperf's -b, i.e. the OFFERED load in Mbit/s, not a limit on what is measured. iperf can never report more than it was asked to send, so a low offer caps the result: at -b 20 an ESP32-S3 that can do ~30 Mbit/s still measures ~20 and looks 'slow'. Measured results need the offer at or above the expected capacity, so the main UDP verdict runs at -b 40, and udp_bitrates sweeps 20/30/40 to show the ramp and the plateau.",
-  "udp_bitrates": [20, 30, 40],
-
+  "udp_bitrates": [
+    20,
+    30,
+    40
+  ],
   "reference_baseline": false,
   "thresholds_file": "config/thresholds.json",
   "official_file": "config/official_throughput.json",
-
   "run_notes": [
     "Measured with ESP-IDF v5.5.4 and the iperf example's own sdkconfig.defaults.esp32s3 (the 'iperf rank' buffers). Espressif's published reference figures were measured on IDF commit 15575346 (2021-04-21) for ESP32/S2/S3/C3 and 7ff0a07d (2024-12-14) for ESP32-C6 - so they are a reference, not a spec for this build.",
     "Reference is an ESP32-C6-DevKitC-1 (devkit antenna, different chip) while the DUT uses a small chip antenna on a compact board, so the scan/RSSI-delta verdict is INDICATIVE only. A conclusive antenna verdict needs an identical DUT board as the reference.",
@@ -57,12 +53,11 @@
   "thresholds": {
     "rssi_delta_db_max": 20
   },
-
   "esptool": {
     "python": "C:/Espressif/tools/python/v5.5.4/venv/Scripts/python.exe",
     "path": "D:/IDF_5_5_AI/.espressif/v5.5.4/esp-idf/components/esptool_py/esptool/esptool.py"
   },
-
   "nvs_offset": "0x9000",
-  "nvs_size": "0x6000"
+  "nvs_size": "0x6000",
+  "_erase_nvs_note": "Rerun hygiene: pass --erase-nvs (or set \"erase_nvs\": true) so the board does not come up still associated and auto-reconnecting. It needs esptool to reach the DUT (DTR/RTS wired to BOOT0/EN); without that the harness falls back to sta_disconnect before each scan, which also works."
 }
