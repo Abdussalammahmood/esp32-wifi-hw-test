@@ -110,8 +110,9 @@ idf.py --version          # must print: ESP-IDF v5.5.4
 5. **Read the report** — `results/<timestamp>_<name>.md`. It contains the verdict table, the
    scan/RSSI comparison against the reference, the link data and the throughput table.
 6. **Report back to the user** in this shape:
-   - overall PASS/FAIL,
+   - overall PASS/FAIL — and note that it is the AND of **every** verdict row,
    - the evidence lines that drove it (AP count + median RSSI delta, RSSI, TCP/UDP Mbit/s both ways),
+   - any `no panic on <board>` failure: which board, which phase, and how many runs it happened in,
    - for UDP, **quote the offered rate with the result** (`17.5 Mbit/s at -b 40`), never a bare number,
    - the distinction *hardware vs firmware* if something failed,
    - the report file path.
@@ -143,10 +144,13 @@ with the offer it was measured at, and never hand-copy a `-b 20` result as if it
 | AP count low or median RSSI delta > 8 dB vs reference | RF path fault (antenna/matching/FEM/module) |
 | Association/ping fine, throughput poor and one-sided | RF retries — layout, interference, power integrity |
 | Panics in wifi/supplicant (`rsn_selector_to_bitfield`, `cnx_get_authtype_strength`) | firmware/library issue, not RF — do not blame the antenna |
+| `no panic on <board>` FAIL while **every** throughput number passed | the board crashed during the run (association / reconnect path). The run is a **FAIL overall** even though the numbers look healthy — report the crash, and re-run to see how often it happens |
 | No connection at all, console silent | power/reset/wiring, or DTR/RTS held asserted |
 
 Never claim "hardware is fine" from an absolute number alone — always show the reference comparison,
-and quote the IDF version the numbers came from.
+and quote the IDF version the numbers came from. **Read the whole verdict table**: the overall result
+is the AND of every row, so a `no panic` failure fails the run even when scan, ping and all four
+throughput numbers passed.
 
 ## Failure playbook
 
@@ -159,7 +163,10 @@ and quote the IDF version the numbers came from.
    RTS=True = held in reset. The harness already releases both.
 4. **DUT panics during scan/connect** → record it, then use `"scan_command": "scan"` (not
    `sta_scan`), keep the SoftAP at `"pmf": "off"`, and test the product firmware's own scan/connect
-   path to see whether the crash is in the product stack too.
+   path to see whether the crash is in the product stack too. It is **intermittent**: the same board
+   was seen to panic once at association and pass cleanly on the next run, so report the frequency
+   (`failed 1 of 3 runs`) rather than calling the board broken. The harness records it as a
+   `no panic on <board>` verdict and fails that run.
 5. **`iperf: invalid argument "20M"`** → `-b` wants a bare number in Mbit/s: `-b 40`. Remember `-b` is
    the **offered** load, so a value below the expected capacity produces a capped, misleading UDP
    result — see the UDP rule above.
