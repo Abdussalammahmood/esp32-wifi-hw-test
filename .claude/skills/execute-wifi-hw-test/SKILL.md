@@ -3,9 +3,10 @@ name: execute-wifi-hw-test
 description: |
   Run the ESP32 WiFi hardware verification harness (esp32-wifi-hw-test) against a device under
   test and a known-good reference board, then judge whether the DUT's WiFi hardware is correct.
-  Covers: finding COM ports, preparing/flashing the IDF wifi/iperf example on both boards,
+  Covers: finding COM ports, building/flashing the vendored wifi/iperf firmware on both boards,
   writing the run config, executing wifi_hw_test.py, reading the generated markdown report, and
-  the failure playbook (stale NVS, busy port, supplicant panics, DTR/RTS traps).
+  the failure playbook (stale NVS, busy port, supplicant panics, DTR/RTS traps). Falls back to
+  docs/MANUAL_TESTING.md when the user wants to run the test by hand.
 ---
 
 # Execute the WiFi hardware test
@@ -30,9 +31,10 @@ Do **not** guess ports. Two boards on the wrong ports produce a confident but me
 ## Two ways the user can run this
 
 - **You do it (default):** follow the steps below, run `wifi_hw_test.py`, then report the verdicts.
-- **The user does it by hand:** hand them [`docs/MANUAL_TESTING.md`](../../docs/MANUAL_TESTING.md) —
-  the same test as two serial terminals plus the acceptance table. Offer this whenever the user says
-  they want to build/flash/measure themselves, or when they don't want an agent driving their boards.
+- **The user does it by hand:** hand them [`docs/MANUAL_TESTING.md`](../../../docs/MANUAL_TESTING.md)
+  (repo root → `docs/MANUAL_TESTING.md`) — the same test as two serial terminals plus the acceptance
+  table. Offer this whenever the user says they want to build/flash/measure themselves, or when they
+  don't want an agent driving their boards.
 
 ## Steps
 
