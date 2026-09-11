@@ -1,0 +1,62 @@
+{
+  "name": "astra-s3-vs-c6-devkit",
+  "comment": "DUT = Astra custom ESP32-S3R8 board (chip antenna). Reference = ESP32-C6-DevKitC-1. No real network credentials are needed: the reference board creates its own SoftAP.",
+
+  "dut": {
+    "name": "Astra custom board (ESP32-S3R8, chip antenna)",
+    "port": "COM8",
+    "chip": "esp32s3"
+  },
+
+  "reference": {
+    "name": "ESP32-C6-DevKitC-1 (known good)",
+    "port": "COM10",
+    "chip": "esp32c6"
+  },
+
+  "ap": {
+    "ssid": "WIFI_HW_TEST",
+    "password": "test12345",
+    "ip": "192.168.4.1",
+    "pmf": "off"
+  },
+
+  "scan_command": "scan",
+  "tests": {
+    "scan": true,
+    "assoc": true,
+    "ping": true,
+    "tcp_tx": true,
+    "tcp_rx": true,
+    "udp_tx": true,
+    "udp_rx": true
+  },
+
+  "durations": {
+    "scan": 15,
+    "ping": 12,
+    "interval": 2,
+    "tcp": 15,
+    "udp": 10,
+    "udp_bitrate": 20
+  },
+
+  "reference_baseline": false,
+  "thresholds_file": "config/thresholds.json",
+
+  "run_notes": [
+    "Reference is an ESP32-C6-DevKitC-1 (devkit antenna, different chip) while the DUT uses a small chip antenna on a compact board, so the scan/RSSI-delta verdict is INDICATIVE only. A conclusive antenna verdict needs an identical DUT board as the reference.",
+    "rssi_delta_db_max is relaxed to 20 dB here for that mixed-antenna comparison; the strict default in config/thresholds.json is 8 dB."
+  ],
+  "thresholds": {
+    "rssi_delta_db_max": 20
+  },
+
+  "esptool": {
+    "python": "C:/Espressif/tools/python/v5.5.4/venv/Scripts/python.exe",
+    "path": "D:/IDF_5_5_AI/.espressif/v5.5.4/esp-idf/components/esptool_py/esptool/esptool.py"
+  },
+
+  "nvs_offset": "0x9000",
+  "nvs_size": "0x6000"
+}

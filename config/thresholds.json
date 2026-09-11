@@ -1,0 +1,38 @@
+{
+  "_comment": "Absolute acceptance floors per chip class. A test FAILS if measured below the floor. Reference-relative rules use ref_ratio_min (see README).",
+
+  "default": {
+    "scan_ap_ratio_min": 0.6,
+    "rssi_delta_db_max": 8,
+    "min_rssi_dbm": -70,
+    "ping_loss_pct_max": 5,
+    "tcp_min_mbit": 12,
+    "udp_min_mbit": 10,
+    "ref_ratio_min": 0.7
+  },
+
+  "esp32s3": {
+    "tcp_min_mbit": 15,
+    "udp_min_mbit": 12
+  },
+  "esp32s2": {
+    "tcp_min_mbit": 10,
+    "udp_min_mbit": 8
+  },
+  "esp32c6": {
+    "tcp_min_mbit": 12,
+    "udp_min_mbit": 10
+  },
+  "esp32c3": {
+    "tcp_min_mbit": 8,
+    "udp_min_mbit": 6
+  },
+  "esp32c2": {
+    "tcp_min_mbit": 4,
+    "udp_min_mbit": 3
+  },
+  "esp32": {
+    "tcp_min_mbit": 10,
+    "udp_min_mbit": 8
+  }
+}

@@ -1,0 +1,21 @@
+# build artefacts / firmware projects pulled from the IDF tree
+firmware/*/build/
+firmware/*/managed_components/
+firmware/*/sdkconfig
+firmware/*/sdkconfig.old
+firmware/*/dependencies.lock
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# run logs (reports in results/ are meant to be committed)
+*.log
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
