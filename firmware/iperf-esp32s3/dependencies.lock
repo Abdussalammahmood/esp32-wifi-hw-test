@@ -52,7 +52,7 @@ dependencies:
   idf:
     source:
       type: idf
-    version: 5.5.4
+    version: 5.4.1
 direct_dependencies:
 - cmd_system
 - esp-qa/ping-cmd

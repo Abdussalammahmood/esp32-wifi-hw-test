@@ -124,7 +124,7 @@ The reference board creates the SoftAP, so **no real network credentials are nee
 wifi_hw_test.py                  harness -> results/<run>.md
 config/                          run config, acceptance floors, official chip figures
 firmware/iperf-esp32s3|esp32c6/  test firmware source (builds offline, IDF v5.5.4)
-docs/MANUAL_TESTING.md           do the whole test by hand, no Python (+ VS Code steps)
+docs/MANUAL_TESTING.md           by hand, no Python: which board each command goes to + what to see
 .claude/skills/execute-wifi-hw-test/SKILL.md   AI skill: run it and judge the result
 tools/prepare_firmware.py        generate firmware for any other target
 results/                         a real reference run (PASS report)
