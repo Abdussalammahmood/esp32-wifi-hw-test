@@ -22,10 +22,17 @@ moment and writes a verdict report. It never flashes your product firmware.
 |---|---|
 | DUT port + board name + chip | `python wifi_hw_test.py --list-ports`, ask the user, or read the ROM banner |
 | Reference port + board name + chip | same |
-| Firmware already on both boards? | ask; both must run the ESP-IDF `wifi/iperf` example |
+| Firmware already on both boards? | ask; the firmware **source is in this repo** (`firmware/iperf-esp32s3/`, `firmware/iperf-esp32c6/`) and both build offline |
 | IDF location | e.g. `D:\IDF_...\esp-idf`, tools root, venv python |
 
 Do **not** guess ports. Two boards on the wrong ports produce a confident but meaningless report.
+
+## Two ways the user can run this
+
+- **You do it (default):** follow the steps below, run `wifi_hw_test.py`, then report the verdicts.
+- **The user does it by hand:** hand them [`docs/MANUAL_TESTING.md`](../../docs/MANUAL_TESTING.md) —
+  the same test as two serial terminals plus the acceptance table. Offer this whenever the user says
+  they want to build/flash/measure themselves, or when they don't want an agent driving their boards.
 
 ## Steps
 
@@ -33,11 +40,16 @@ Do **not** guess ports. Two boards on the wrong ports produce a confident but me
    ```bash
    python wifi_hw_test.py --list-ports
    ```
-2. **Firmware on both boards** (skip if already flashed with the iperf example)
+2. **Firmware on both boards** (skip if already flashed with the iperf example). The firmware is
+   vendored in this repo and builds offline:
    ```bash
-   python tools/prepare_firmware.py --target esp32s3 --dest firmware/iperf-esp32s3 \
+   cd firmware/iperf-esp32s3 && idf.py set-target esp32s3 && idf.py -p <DUT_PORT> flash && cd ../..
+   cd firmware/iperf-esp32c6 && idf.py set-target esp32c6 && idf.py -p <REF_PORT> flash && cd ../..
+   ```
+   Different chip? Generate a copy:
+   ```bash
+   python tools/prepare_firmware.py --target <chip> --dest firmware/iperf-<chip> \
        --idf-path <IDF> --tools-path <TOOLS> --python-env <VENV> --path-prepend <TOOL_BINS> --build
-   # then: idf.py -p <PORT> flash   (from the dest dir, in an activated IDF shell)
    ```
    The example provides the console commands the harness uses (`scan`, `sta_connect`, `wifi_mode`,
    `ap_set`, `ping`, `iperf`).

@@ -62,21 +62,24 @@ Two independent verdict sources:
 This harness always opens ports with **DTR=False, RTS=False**; if you write your own capture code,
 do the same.
 
-## 3. Quick start
+## 3. Two ways to use this repo
+
+### 3.1 Automated — harness or AI skill (recommended)
+
+The firmware source is included, so the only outside dependency is an ESP-IDF install to build it.
 
 ```bash
 # 1. find your ports
 python wifi_hw_test.py --list-ports
 
-# 2. put the test firmware on both boards (see firmware/README.md)
-python tools/prepare_firmware.py --target esp32s3 --dest firmware/iperf-esp32s3
-python tools/prepare_firmware.py --target esp32c6 --dest firmware/iperf-esp32c6
-#    then, from each dest: idf.py -p <PORT> flash
+# 2. build + flash the included firmware (details in firmware/README.md)
+cd firmware/iperf-esp32s3 && idf.py set-target esp32s3 && idf.py -p COM8  flash && cd ../..
+cd firmware/iperf-esp32c6 && idf.py set-target esp32c6 && idf.py -p COM10 flash && cd ../..
 
 # 3. copy a config and set your ports / board names
 cp config/astra_s3_vs_c6.json config/my_board.json
 
-# 4. run it
+# 4. run it — the harness drives both boards and writes the report
 python wifi_hw_test.py --config config/my_board.json --out results/
 #    exit code 0 = all verdicts PASS, 1 = something FAILED (CI friendly)
 ```
@@ -85,6 +88,23 @@ If association hangs (console stops answering, no connect events) the board has 
 config in NVS — rerun with `--erase-nvs`.
 
 Output: `results/<timestamp>_<name>.md` — see `results/` for a real example produced by this repo.
+
+**AI skill:** `.claude/skills/execute-wifi-hw-test/SKILL.md` lets an agent do all of the above —
+pick ports, build/flash, run, read the report, and tell you whether the DUT is correct.
+
+### 3.2 Manual — build and test it yourself
+
+Same test, no Python harness: two serial terminals and the commands in
+**[`docs/MANUAL_TESTING.md`](docs/MANUAL_TESTING.md)**. That document has the exact command sequence
+for both boards, the expected output at each step, and the acceptance table so you can judge
+PASS/FAIL by hand.
+
+### 3.3 What firmware runs on the boards?
+
+`firmware/iperf-esp32s3/` and `firmware/iperf-esp32c6/` — the stock ESP-IDF `wifi/iperf` example,
+with its `managed_components/` committed so it builds offline. Nothing in your product firmware is
+touched, which is what makes a bad result a *hardware* result rather than an application bug.
+
 
 ## 4. Config reference
 
@@ -178,8 +198,10 @@ DUT is correct — including the failure playbook (stale NVS, busy port, panics)
 wifi_hw_test.py                     harness (drives both consoles, writes the report)
 config/astra_s3_vs_c6.json          real-world example config
 config/thresholds.json              acceptance floors per chip class
-tools/prepare_firmware.py           copy + build the IDF wifi/iperf example for any target
-firmware/README.md                  firmware preparation details
+firmware/iperf-esp32s3/             DUT firmware  - stock IDF wifi/iperf example, builds offline
+firmware/iperf-esp32c6/             REF firmware  - same example, different target
+tools/prepare_firmware.py           generate the firmware for any other target
+docs/MANUAL_TESTING.md              run the whole test by hand, no Python
 .claude/skills/execute-wifi-hw-test/SKILL.md   AI skill: run it and judge the result
 results/                            generated markdown reports (one committed as a reference)
 ```

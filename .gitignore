@@ -1,9 +1,9 @@
-# build artefacts / firmware projects pulled from the IDF tree
+# Firmware build artefacts only.
+# The firmware SOURCE is committed on purpose - including managed_components/ and
+# dependencies.lock - so both projects build offline without the component registry.
 firmware/*/build/
-firmware/*/managed_components/
 firmware/*/sdkconfig
 firmware/*/sdkconfig.old
-firmware/*/dependencies.lock
 
 # python
 __pycache__/
