@@ -8,8 +8,9 @@ Use it for: new board bring-up, antenna changes, a batch that fails certificatio
 
 > **Helping AI skill:** [`.claude/skills/execute-wifi-hw-test/SKILL.md`](.claude/skills/execute-wifi-hw-test/SKILL.md)
 > — an agent picks the ports, builds/flashes both boards, runs the tests and tells you whether the
-> DUT is correct. Prefer to do it yourself? Follow
-> **[`docs/MANUAL_TESTING.md`](docs/MANUAL_TESTING.md)** (includes VS Code + ESP-IDF v5.5.4 steps).
+> DUT is correct. Prefer to do it yourself? **[`docs/MANUAL_TESTING.md`](docs/MANUAL_TESTING.md)**
+> walks through every console command with what it does and the output to expect, plus the VS Code +
+> ESP-IDF v5.5.4 build steps.
 
 ## How it works
 
