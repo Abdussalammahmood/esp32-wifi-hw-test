@@ -142,6 +142,8 @@ with the offer it was measured at, and never hand-copy a `-b 20` result as if it
 | UDP below official 30 Mbit/s but `-b` offered was below 30 | **inconclusive** — the offer capped it; rerun at `-b 40` before judging |
 | UDP plateaus well below 30 Mbit/s **even at `-b 40`** | real link ceiling — compare with the reference board and report both |
 | AP count low or median RSSI delta > 8 dB vs reference | RF path fault (antenna/matching/FEM/module) |
+| **0 APs and no `SCAN_DONE` line**, or console output stops mid-line | the chip **reset during the scan** — read the reset reason, look for `E BOD: Brownout detector was triggered`. That is a **power** fault, not an antenna one |
+| Throughput collapses in one direction only (e.g. RX ~1.5 Mbit/s, TX fine) | check for resets/brownout first; a supply that sags under load looks like an RF fault |
 | Association/ping fine, throughput poor and one-sided | RF retries — layout, interference, power integrity |
 | Panics in wifi/supplicant (`rsn_selector_to_bitfield`, `cnx_get_authtype_strength`) | firmware/library issue, not RF — do not blame the antenna |
 | `no panic on <board>` FAIL while **every** throughput number passed | the board crashed during the run (association / reconnect path). The run is a **FAIL overall** even though the numbers look healthy — report the crash, and re-run to see how often it happens |
@@ -181,6 +183,16 @@ throughput numbers passed.
      `git checkout -- dependencies.lock`, rebuild with v5.5.4.
 7. **Impossible throughput (e.g. 1000+ Mbit/s)** → a leftover iperf server from an earlier run; the
    parser drops summaries whose interval does not match, but don't hand-copy raw lines.
+8. **`E BOD: Brownout detector was triggered`, `rst:0x3 (RTC_SW_SYS_RESET)`, a scan that returns
+   0 APs / never prints `SCAN_DONE`, or console output that stops mid-line** → the supply sagged
+   under radio load and the chip reset. Real case on the Astra board: run 1 PASS (13 APs), run 2
+   degraded (9 APs, no association), runs 3-5 the DUT died during the scan while the reference kept
+   hearing 11-18 APs. Treat it as a **power-integrity fault**, not antenna/firmware:
+   - check how the board is powered (proper supply vs back-feeding through the UART/USB header),
+   - check the 3V3 rail's bulk capacitance and the regulator's transient response,
+   - retest on a stiff bench supply / short cable,
+   - **never "fix" it by disabling the brownout detector** — that removes the protection that found
+     the fault. Passing only with BOD off *is* the diagnosis.
 
 ## Guardrails
 
