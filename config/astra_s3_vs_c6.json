@@ -41,12 +41,17 @@
     "udp_bitrate": 20
   },
 
+  "udp_bitrates": [20, 30, 40],
+
   "reference_baseline": false,
   "thresholds_file": "config/thresholds.json",
+  "official_file": "config/official_throughput.json",
 
   "run_notes": [
+    "Measured with ESP-IDF v5.5.4 and the iperf example's own sdkconfig.defaults.esp32s3 (the 'iperf rank' buffers). Espressif's published reference figures were measured on IDF commit 15575346 (2021-04-21) for ESP32/S2/S3/C3 and 7ff0a07d (2024-12-14) for ESP32-C6 - so they are a reference, not a spec for this build.",
     "Reference is an ESP32-C6-DevKitC-1 (devkit antenna, different chip) while the DUT uses a small chip antenna on a compact board, so the scan/RSSI-delta verdict is INDICATIVE only. A conclusive antenna verdict needs an identical DUT board as the reference.",
-    "rssi_delta_db_max is relaxed to 20 dB here for that mixed-antenna comparison; the strict default in config/thresholds.json is 8 dB."
+    "rssi_delta_db_max is relaxed to 20 dB here for that mixed-antenna comparison; the strict default in config/thresholds.json is 8 dB.",
+    "Official air/shield columns in the report are Espressif's best-case figures (shield-box needs a shielded box + router peer). They are reference only and never affect PASS/FAIL."
   ],
   "thresholds": {
     "rssi_delta_db_max": 20

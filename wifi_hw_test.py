@@ -185,9 +185,10 @@ def parse_ping(lines: list[str]) -> dict:
 
 
 class WifiTest:
-    def __init__(self, cfg: dict, thresholds: dict, echo: bool = True):
+    def __init__(self, cfg: dict, thresholds: dict, official: dict | None = None, echo: bool = True):
         self.cfg = cfg
         self.th = thresholds
+        self.official = official or {}
         self.echo = echo
         self.dut = Console(cfg["dut"]["port"], echo=echo)
         self.ref = Console(cfg["reference"]["port"], echo=echo)
@@ -207,6 +208,14 @@ class WifiTest:
     def log(self, msg: str) -> None:
         print("\n===== %s =====" % msg, flush=True)
         self.result["notes"].append(msg)
+
+    def official_for(self, board_key: str) -> dict:
+        """Espressif's published reference figures for this chip (never used as a pass/fail limit)."""
+        chip = (self.cfg[board_key].get("chip") or "").lower()
+        return (self.official.get("chips") or {}).get(chip, {})
+
+    def official_sources(self) -> dict:
+        return {"note": self.official.get("_conditions", ""), "source": self.official.get("_source", "")}
 
     def chip_thresholds(self, board_key: str) -> dict:
         chip = (self.cfg[board_key].get("chip") or "default").lower()
@@ -261,7 +270,15 @@ class WifiTest:
                     self.dut = fresh
                 else:
                     self.ref = fresh
-                fresh.drain(2)
+                boot = fresh.drain(3)
+                # provenance: which IDF / wifi firmware / PHY the numbers belong to
+                bt = "\n".join(boot)
+                for key, pat in (("idf_version", r"ESP-IDF v?([0-9][0-9.]*)"),
+                                 ("wifi_fw_version", r"wifi firmware version:\s*(\S+)"),
+                                 ("phy_version", r"phy_version\s+([0-9a-fA-F.,]+)")):
+                    m = re.search(pat, bt)
+                    if m:
+                        info[key] = m.group(1)
         return info
 
     def scan(self, board_key: str) -> dict:
@@ -323,6 +340,9 @@ class WifiTest:
         self.ref.drain(2)
         self.result["dut"]["identity"] = self.identify("dut")
         self.result["reference"]["identity"] = self.identify("reference")
+        self.result["dut"]["official"] = self.official_for("dut")
+        self.result["reference"]["official"] = self.official_for("reference")
+        self.result["official_meta"] = self.official_sources()
 
         # 1. scans (both boards, same moment/environment)
         th = self.cfg.get("esptool")
@@ -366,6 +386,16 @@ class WifiTest:
             if self.runs.get("udp_rx", True):
                 self.log("UDP RX: reference -> DUT")
                 T["udp_rx"] = self._iperf_dut_rx(udp, iv, udp=True, bitrate=bw)
+
+            # optional UDP offered-load sweep: shows where the link saturates / starts dropping.
+            # Reference information only - it does not change any verdict.
+            rates = self.cfg.get("udp_bitrates") or []
+            if rates:
+                sweep = {}
+                for rate in rates:
+                    self.log("UDP TX sweep at %s Mbit/s offered" % rate)
+                    sweep[str(rate)] = self._iperf_dut_tx(udp, iv, udp=True, bitrate=int(rate))
+                T["udp_tx_sweep"] = sweep
 
         # 4. optional baseline: reference board in the client role, same conditions
         if self.cfg.get("reference_baseline", False):
@@ -522,6 +552,22 @@ def build_report(res: dict, V: list[dict]) -> str:
             label, i.get("name"), i.get("port"), i.get("chip_detected") or i.get("chip"),
             i.get("mac", "?"), (i.get("features", "") or "")[:48]))
     L.append("")
+    L.append("## Provenance (which firmware produced these numbers)")
+    L.append("")
+    L.append("| Role | ESP-IDF | WiFi firmware | PHY version |")
+    L.append("|---|---|---|---|")
+    for key, label in (("dut", "DUT"), ("reference", "Reference")):
+        i = res[key]["identity"]
+        L.append("| %s | %s | %s | %s |" % (label, i.get("idf_version", "?"),
+                                           i.get("wifi_fw_version", "?"), i.get("phy_version", "?")))
+    om = res.get("official_meta", {})
+    dut_off = dut.get("official", {}) or {}
+    if dut_off.get("idf_commit"):
+        L.append("")
+        L.append("> Official reference figures below were measured by Espressif on IDF commit "
+                 "`%s` (%s) - **not** on the IDF version used for this run." %
+                 (dut_off.get("idf_commit"), dut_off.get("idf_commit_date", "?")))
+    L.append("")
     L.append("## Verdicts")
     L.append("")
     L.append("| Test | Result | Detail |")
@@ -557,8 +603,9 @@ def build_report(res: dict, V: list[dict]) -> str:
     L.append("")
     L.append("## Throughput")
     L.append("")
-    L.append("| Test | DUT avg | min | max | reference baseline | ratio |")
-    L.append("|---|---|---|---|---|---|")
+    off_air, off_shield = dut_off.get("air", {}), dut_off.get("shield", {})
+    L.append("| Test | DUT avg | min | max | reference baseline | ratio | official air | official shield |")
+    L.append("|---|---|---|---|---|---|---|---|")
     base = ref.get("baseline", {})
     for key, label, bk in (("tcp_tx", "TCP TX (DUT → ref)", "tcp_tx"),
                            ("tcp_rx", "TCP RX (ref → DUT)", "tcp_rx"),
@@ -567,13 +614,36 @@ def build_report(res: dict, V: list[dict]) -> str:
         t = tests.get(key) or {}
         b = base.get(bk) if bk else None
         ratio = ("%.2f" % (t["avg"] / b["avg"])) if (t.get("avg") and b and b.get("avg")) else "—"
-        L.append("| %s | %s | %s | %s | %s | %s |" % (
+        L.append("| %s | %s | %s | %s | %s | %s | %s | %s |" % (
             label,
             ("%.2f Mbit/s" % t["avg"]) if t.get("avg") else "—",
             ("%.2f" % t["min"]) if t.get("min") else "—",
             ("%.2f" % t["max"]) if t.get("max") else "—",
             ("%.2f Mbit/s" % b["avg"]) if b and b.get("avg") else "not measured",
-            ratio))
+            ratio,
+            ("%s Mbit/s" % off_air.get(key)) if off_air.get(key) else "—",
+            ("%s Mbit/s" % off_shield.get(key)) if off_shield.get(key) else "—"))
+    L.append("")
+    L.append("`official air` / `official shield` are Espressif's published best-case figures for %s "
+             "(%s) - **reference only, never used as a pass/fail limit**; the shield-box column needs "
+             "a shielded box and a router peer. %s" %
+             (dut_off.get("name", dut.get("identity", {}).get("chip", "this chip")),
+              ("IDF commit %s, %s" % (dut_off.get("idf_commit"), dut_off.get("idf_commit_date")))
+              if dut_off.get("idf_commit") else "no published table for this chip",
+              om.get("source", "")))
+    sweep = tests.get("udp_tx_sweep")
+    if sweep:
+        L.append("")
+        L.append("### UDP offered-load sweep (DUT → ref, reference only)")
+        L.append("")
+        L.append("| Offered | Achieved avg | min | max |")
+        L.append("|---|---|---|---|")
+        for rate, s in sweep.items():
+            L.append("| %s Mbit/s | %s | %s | %s |" % (
+                rate,
+                ("%.2f Mbit/s" % s["avg"]) if s.get("avg") else "no data",
+                ("%.2f" % s["min"]) if s.get("min") else "—",
+                ("%.2f" % s["max"]) if s.get("max") else "—"))
     L.append("")
     if res.get("notes"):
         L.append("## Run log")
@@ -623,6 +693,10 @@ def main() -> int:
     if not os.path.isabs(th_path):
         th_path = os.path.join(here, th_path)
     thresholds = load_json(th_path)
+    off_path = cfg.get("official_file") or os.path.join(here, "config", "official_throughput.json")
+    if not os.path.isabs(off_path):
+        off_path = os.path.join(here, off_path)
+    official = load_json(off_path) if os.path.exists(off_path) else {}
     cfg.setdefault("esptool", {})
     if cfg["esptool"].get("path") and not os.path.isabs(cfg["esptool"]["path"]):
         cfg["esptool"]["path"] = os.path.join(here, cfg["esptool"]["path"])
@@ -640,7 +714,7 @@ def main() -> int:
         subprocess.run(cmd, check=False)
         time.sleep(3)
 
-    t = WifiTest(cfg, thresholds, echo=not args.quiet)
+    t = WifiTest(cfg, thresholds, official=official, echo=not args.quiet)
     try:
         res = t.run()
     finally:

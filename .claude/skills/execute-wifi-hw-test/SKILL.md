@@ -24,9 +24,15 @@ moment and writes a verdict report. It never flashes your product firmware.
 | DUT port + board name + chip | `python wifi_hw_test.py --list-ports`, ask the user, or read the ROM banner |
 | Reference port + board name + chip | same |
 | Firmware already on both boards? | ask; the firmware **source is in this repo** (`firmware/iperf-esp32s3/`, `firmware/iperf-esp32c6/`) and both build offline |
+| **ESP-IDF version** | must be **v5.5.4** (`idf.py --version`) — the version the vendored firmware and the reference results were built with; check before building |
 | IDF location | e.g. `D:\IDF_...\esp-idf`, tools root, venv python |
 
 Do **not** guess ports. Two boards on the wrong ports produce a confident but meaningless report.
+
+**Wrong IDF version is the most common self-inflicted failure**: building with e.g. v5.4.1 rewrites
+`firmware/*/dependencies.lock` (`version: 5.5.4` → `5.4.1`) and changes Wi-Fi behaviour, so the numbers
+stop being comparable. Fix: `idf.py fullclean`, delete `sdkconfig`, `git checkout -- dependencies.lock`,
+then rebuild with v5.5.4.
 
 ## Two ways the user can run this
 
@@ -72,16 +78,27 @@ Do **not** guess ports. Two boards on the wrong ports produce a confident but me
 
 ## What "correct" means
 
+Three references, in order of authority:
+
+1. **The reference board** (same room, same moment) — the hardware evidence.
+2. **Absolute floors** from `config/thresholds.json` — sanity limits, peer-dependent.
+3. **Espressif's published figures** from `config/official_throughput.json` — reference only, shown in
+   the report as `official air` / `official shield`. They were measured on old IDF commits (S3:
+   2021-04-21, C6: 2024-12-14), the shield-box column needs a router peer + clean RF, and they must
+   **never** be used to fail a board. Use the *air* column as the yardstick for an ESP↔ESP test.
+
 | Observation | Conclusion |
 |---|---|
-| All verdicts PASS; TCP TX ≈ RX | WiFi hardware correct for this chip class |
+| All verdicts PASS; TCP TX ≈ RX; TCP near the official air figure (20 Mbit/s for S3) | WiFi hardware correct for this chip class |
 | Low absolute Mbit/s but good ratio vs reference | peer/socket-buffer limited, **not** a DUT fault |
+| UDP far below the official 30 Mbit/s **while offering only 20** | inconclusive — rerun with `"udp_bitrates": [20, 30, 40]` before judging |
 | AP count low or median RSSI delta > 8 dB vs reference | RF path fault (antenna/matching/FEM/module) |
 | Association/ping fine, throughput poor and one-sided | RF retries — layout, interference, power integrity |
 | Panics in wifi/supplicant (`rsn_selector_to_bitfield`, `cnx_get_authtype_strength`) | firmware/library issue, not RF — do not blame the antenna |
 | No connection at all, console silent | power/reset/wiring, or DTR/RTS held asserted |
 
-Never claim "hardware is fine" from an absolute number alone — always show the reference comparison.
+Never claim "hardware is fine" from an absolute number alone — always show the reference comparison,
+and quote the IDF version the numbers came from.
 
 ## Failure playbook
 
@@ -96,7 +113,9 @@ Never claim "hardware is fine" from an absolute number alone — always show the
    `sta_scan`), keep the SoftAP at `"pmf": "off"`, and test the product firmware's own scan/connect
    path to see whether the crash is in the product stack too.
 5. **`iperf: invalid argument "20M"`** → `-b` wants a number: `-b 20`.
-6. **Impossible throughput (e.g. 1000+ Mbit/s)** → a leftover iperf server from an earlier run; the
+6. **Wrong ESP-IDF version** (build errors, or `dependencies.lock` rewritten to e.g. `5.4.1`) →
+   `idf.py fullclean`, delete `sdkconfig`, `git checkout -- dependencies.lock`, rebuild with v5.5.4.
+7. **Impossible throughput (e.g. 1000+ Mbit/s)** → a leftover iperf server from an earlier run; the
    parser drops summaries whose interval does not match, but don't hand-copy raw lines.
 
 ## Guardrails

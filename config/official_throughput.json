@@ -1,0 +1,57 @@
+{
+  "_comment": "Official Espressif Wi-Fi throughput figures. REFERENCE ONLY - these are NOT pass/fail limits; the harness never fails a board for being below them (they need a shielded box and a router peer).",
+  "_conditions": "Single stream, iperf example built with examples/wifi/iperf/sdkconfig.defaults.<chip>. 'air' = best over-the-air result in Espressif's lab; 'shield' = shielded box using an ASUS RT-N66U router. Units: Mbit/s.",
+  "_source": "ESP-IDF docs, 'Wi-Fi Performance and Power Save', per-target page: https://docs.espressif.com/projects/esp-idf/en/v6.0/<chip>/api-guides/wifi-driver/wifi-performance-and-power-save.html",
+  "_idf_note": "The tables are stamped with the IDF commit the measurement was made on, which is NOT the IDF version you build with. ESP32/S2/S3/C3 figures are from commit 15575346 (2021-04-21); the ESP32-C6 figures are from 7ff0a07d (2024-12-14).",
+
+  "chips": {
+    "esp32": {
+      "name": "ESP32",
+      "idf_commit": "15575346",
+      "idf_commit_date": "2021-04-21",
+      "air":    { "udp_rx": 30, "udp_tx": 30, "tcp_rx": 20, "tcp_tx": 20 },
+      "shield": { "udp_rx": 85, "udp_tx": 75, "tcp_rx": 65, "tcp_tx": 75 },
+      "raw_80211_shield": 130
+    },
+    "esp32s2": {
+      "name": "ESP32-S2",
+      "idf_commit": "15575346",
+      "idf_commit_date": "2021-04-21",
+      "air":    { "udp_rx": 30, "udp_tx": 30, "tcp_rx": 20, "tcp_tx": 20 },
+      "shield": { "udp_rx": 70, "udp_tx": 50, "tcp_rx": 32, "tcp_tx": 37 },
+      "raw_80211_shield": 130
+    },
+    "esp32s3": {
+      "name": "ESP32-S3",
+      "idf_commit": "15575346",
+      "idf_commit_date": "2021-04-21",
+      "air":    { "udp_rx": 30, "udp_tx": 30, "tcp_rx": 20, "tcp_tx": 20 },
+      "shield": { "udp_rx": 88, "udp_tx": 98, "tcp_rx": 73, "tcp_tx": 83 },
+      "raw_80211_shield": 130
+    },
+    "esp32c3": {
+      "name": "ESP32-C3",
+      "idf_commit": "15575346",
+      "idf_commit_date": "2021-04-21",
+      "air":    { "udp_rx": 30, "udp_tx": 30, "tcp_rx": 20, "tcp_tx": 20 },
+      "shield": { "udp_rx": 50, "udp_tx": 40, "tcp_rx": 35, "tcp_tx": 37 },
+      "raw_80211_shield": 130
+    },
+    "esp32c6": {
+      "name": "ESP32-C6",
+      "idf_commit": "7ff0a07d",
+      "idf_commit_date": "2024-12-14",
+      "air":    { "udp_rx": 30, "udp_tx": 30, "tcp_rx": 20, "tcp_tx": 20 },
+      "shield": { "udp_rx": 63, "udp_tx": 51, "tcp_rx": 46, "tcp_tx": 43 },
+      "raw_80211_shield": 130
+    },
+    "esp32c2": {
+      "name": "ESP32-C2",
+      "note": "Espressif does not publish a throughput table for this chip in the ESP-IDF docs."
+    },
+    "esp32c5": {
+      "name": "ESP32-C5",
+      "note": "No throughput table captured yet. Same docs URL pattern with 'esp32c5'."
+    }
+  }
+}

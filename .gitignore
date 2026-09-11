@@ -1,9 +1,12 @@
-# Firmware build artefacts only.
+# firmware build artefacts only.
 # The firmware SOURCE is committed on purpose - including managed_components/ and
 # dependencies.lock - so both projects build offline without the component registry.
 firmware/*/build/
 firmware/*/sdkconfig
 firmware/*/sdkconfig.old
+firmware/*/.clangd
+firmware/*/.cache/
+firmware/*/.vscode/
 
 # python
 __pycache__/
