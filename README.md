@@ -50,7 +50,9 @@ python wifi_hw_test.py --config config/my_board.json --out results/
 
 - Different chips? Build a firmware copy with `tools/prepare_firmware.py`.
 - Association hangs? Add `--erase-nvs` (stale WiFi config).
-- Want the UDP ceiling? `"udp_bitrates": [20, 30, 40]` in the config runs an offered-load sweep.
+- **UDP result looks capped?** `-b` in `iperf -c … -u -b 40` is the **offered load**, so the default is
+  already `40` — see [UDP: `-b` is the offered load](#udp--b-is-the-offered-load-read-before-judging-udp)
+  below. `"udp_bitrates": [20, 30, 40]` adds a sweep that shows the ramp and the plateau.
 
 ## Official Espressif figures (reference only)
 
@@ -72,6 +74,34 @@ numbers need a router peer and clean RF. Data + IDF commit stamps:
 [`config/official_throughput.json`](config/official_throughput.json) (the tables were measured on IDF
 commit `15575346`, 2021-04-21 for S3, and `7ff0a07d`, 2024-12-14 for C6 — **not** on v5.5.4).
 
+## UDP: `-b` is the offered load (read before judging UDP)
+
+`iperf -c 192.168.4.1 -u -b 40` sends **at** 40 Mbit/s and reports what actually got through. iperf can
+never report more than it was asked to send, so **a low `-b` caps the result**: an ESP32-S3 that can do
+30 Mbit/s still reports ~20 when you run `-b 20`, and looks slow for no reason. The offers in the
+Espressif tables above are the offers *they* used — reproduce the offer, or the comparison is void.
+
+| Offered `-b` | Achieved | What it tells you |
+|---|---|---|
+| 20 | below 20 | the **offer** set the number — says nothing about the link |
+| 30 | below 30 | same, but directly comparable with the documented 30 Mbit/s air figure |
+| **40** | plateaus | the **link** is the limit — this is the number to report |
+
+The harness therefore runs the UDP verdicts at **`-b 40`** (`durations.udp_bitrate`) and sweeps
+`udp_bitrates` (20/30/40) so the report shows the ramp and the plateau; the sweep is reference-only and
+never changes a verdict. `-b` takes a bare number in Mbit/s: `-b 40`, not `40M`
+(`invalid argument "40M" to option -b`). The firmware's own help says it plainly:
+`-b, --bandwidth=<bandwidth>  bandwidth to send at in Mbits/sec`.
+
+Measured on the Astra board, changing nothing but the offer — the same board the `-b 20` run had
+already declared unable to reach the documented 30 Mbit/s:
+
+| Offered `-b` | Achieved (DUT → ref) | |
+|---|---|---|
+| 20 | 18.53 Mbit/s | looks like a 20 Mbit/s radio |
+| 30 | 24.99 Mbit/s | still climbing |
+| **40** | **33.15 Mbit/s** | real link — **above** the documented air figure |
+
 ## Pass / fail rules (what the report applies)
 
 | Test | PASS when |
@@ -80,7 +110,7 @@ commit `15575346`, 2021-04-21 for S3, and `7ff0a07d`, 2024-12-14 for C6 — **no
 | association | IP obtained and link RSSI ≥ −70 dBm |
 | ping | loss ≤ 5 % |
 | TCP TX / RX | ≥ chip floor (ESP32-S3: 15 Mbit/s; docs' air figure 20) |
-| UDP TX / RX | ≥ chip floor (ESP32-S3: 12 Mbit/s; docs' air figure 30 — raise the offered rate to compare) |
+| UDP TX / RX | ≥ chip floor (ESP32-S3: 12 Mbit/s) **at `-b 40` offered**; docs' air figure 30 |
 | no panic | no `Guru Meditation` on either board |
 
 Reading the result: low Mbit/s but TX ≈ RX means the peer or socket buffers are the limit, not your
@@ -96,7 +126,7 @@ code are a firmware issue, not RF.
   "reference": { "name": "...", "port": "COM10", "chip": "esp32c6" },
   "ap": { "ssid": "WIFI_HW_TEST", "password": "test12345", "ip": "192.168.4.1", "pmf": "off" },
   "scan_command": "scan",
-  "durations": { "scan": 15, "ping": 12, "interval": 2, "tcp": 15, "udp": 10, "udp_bitrate": 20 },
+  "durations": { "scan": 15, "ping": 12, "interval": 2, "tcp": 15, "udp": 10, "udp_bitrate": 40 },
   "udp_bitrates": [20, 30, 40],         // optional offered-load sweep (reference only)
   "reference_baseline": false,          // true = also measure the reference in the client role
   "thresholds_file": "config/thresholds.json",
@@ -115,7 +145,8 @@ The reference board creates the SoftAP, so **no real network credentials are nee
 3. Close VS Code Monitor / `idf.py monitor` before flashing, or the port is busy.
 4. `sta_connect` hanging means stale NVS → `--erase-nvs`.
 5. Use `scan`, not `sta_scan` (the latter can panic the supplicant on some builds).
-6. `iperf -b 20` (not `20M`), and `iperf --abort` before switching roles.
+6. `iperf -b 40` (not `40M`), and `iperf --abort` before switching roles. Remember `-b` is what you
+   *offer*, so a low value caps the measured UDP number — see above.
 7. Compare only within one run — the harness scans both boards back to back for this reason.
 
 ## Layout
@@ -127,5 +158,6 @@ firmware/iperf-esp32s3|esp32c6/  test firmware source (builds offline, IDF v5.5.
 docs/MANUAL_TESTING.md           by hand, no Python: which board each command goes to + what to see
 .claude/skills/execute-wifi-hw-test/SKILL.md   AI skill: run it and judge the result
 tools/prepare_firmware.py        generate firmware for any other target
-results/                         a real reference run (PASS report)
+results/                         real runs — latest: `…152939…md` (all 7 verdicts PASS, UDP at -b 40)
+                                 plus the raw `.console.log` of that run as evidence
 ```

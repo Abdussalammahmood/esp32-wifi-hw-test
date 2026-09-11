@@ -16,6 +16,8 @@ venv/
 
 # run logs (reports in results/ are meant to be committed)
 *.log
+# ...except the raw console transcript kept next to a committed report as evidence
+!results/*.console.log
 
 # os / editor
 .DS_Store

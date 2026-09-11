@@ -38,9 +38,10 @@
     "interval": 2,
     "tcp": 15,
     "udp": 10,
-    "udp_bitrate": 20
+    "udp_bitrate": 40
   },
 
+  "_udp_bitrate_note": "udp_bitrate is the value passed to iperf's -b, i.e. the OFFERED load in Mbit/s, not a limit on what is measured. iperf can never report more than it was asked to send, so a low offer caps the result: at -b 20 an ESP32-S3 that can do ~30 Mbit/s still measures ~20 and looks 'slow'. Measured results need the offer at or above the expected capacity, so the main UDP verdict runs at -b 40, and udp_bitrates sweeps 20/30/40 to show the ramp and the plateau.",
   "udp_bitrates": [20, 30, 40],
 
   "reference_baseline": false,

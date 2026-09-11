@@ -62,7 +62,8 @@ then rebuild with v5.5.4.
    The example provides the console commands the harness uses (`scan`, `sta_connect`, `wifi_mode`,
    `ap_set`, `ping`, `iperf`).
 3. **Config** — copy `config/astra_s3_vs_c6.json` → `config/<your-run>.json` and set ports, names,
-   chips, durations, `reference_baseline`.
+   chips, durations, `reference_baseline`. Keep `durations.udp_bitrate` at **40** (see the UDP rule
+   below); `udp_bitrates: [20, 30, 40]` adds the offered-load sweep.
 4. **Run**
    ```bash
    python wifi_hw_test.py --config config/<your-run>.json --out results/
@@ -73,6 +74,7 @@ then rebuild with v5.5.4.
 6. **Report back to the user** in this shape:
    - overall PASS/FAIL,
    - the evidence lines that drove it (AP count + median RSSI delta, RSSI, TCP/UDP Mbit/s both ways),
+   - for UDP, **quote the offered rate with the result** (`17.5 Mbit/s at -b 40`), never a bare number,
    - the distinction *hardware vs firmware* if something failed,
    - the report file path.
 
@@ -87,11 +89,19 @@ Three references, in order of authority:
    2021-04-21, C6: 2024-12-14), the shield-box column needs a router peer + clean RF, and they must
    **never** be used to fail a board. Use the *air* column as the yardstick for an ESP↔ESP test.
 
+**UDP needs the offered load set high enough (`-b`).** In `iperf -c <ip> -u -b 40`, `-b` is the rate
+iperf is *asked to send at*, and iperf never reports more than it was asked to send — so a low offer
+**caps the measurement**: an ESP32-S3 that can do 30 Mbit/s still reports ~20 at `-b 20` and looks
+broken. Run UDP at **`-b 40`** (the config default) so the link, not the offer, is the limit, and use
+the `udp_bitrates` sweep (20/30/40) to see the ramp and the plateau. Judge a UDP number only together
+with the offer it was measured at, and never hand-copy a `-b 20` result as if it were a ceiling.
+
 | Observation | Conclusion |
 |---|---|
 | All verdicts PASS; TCP TX ≈ RX; TCP near the official air figure (20 Mbit/s for S3) | WiFi hardware correct for this chip class |
 | Low absolute Mbit/s but good ratio vs reference | peer/socket-buffer limited, **not** a DUT fault |
-| UDP far below the official 30 Mbit/s **while offering only 20** | inconclusive — rerun with `"udp_bitrates": [20, 30, 40]` before judging |
+| UDP below official 30 Mbit/s but `-b` offered was below 30 | **inconclusive** — the offer capped it; rerun at `-b 40` before judging |
+| UDP plateaus well below 30 Mbit/s **even at `-b 40`** | real link ceiling — compare with the reference board and report both |
 | AP count low or median RSSI delta > 8 dB vs reference | RF path fault (antenna/matching/FEM/module) |
 | Association/ping fine, throughput poor and one-sided | RF retries — layout, interference, power integrity |
 | Panics in wifi/supplicant (`rsn_selector_to_bitfield`, `cnx_get_authtype_strength`) | firmware/library issue, not RF — do not blame the antenna |
@@ -112,7 +122,9 @@ and quote the IDF version the numbers came from.
 4. **DUT panics during scan/connect** → record it, then use `"scan_command": "scan"` (not
    `sta_scan`), keep the SoftAP at `"pmf": "off"`, and test the product firmware's own scan/connect
    path to see whether the crash is in the product stack too.
-5. **`iperf: invalid argument "20M"`** → `-b` wants a number: `-b 20`.
+5. **`iperf: invalid argument "20M"`** → `-b` wants a bare number in Mbit/s: `-b 40`. Remember `-b` is
+   the **offered** load, so a value below the expected capacity produces a capped, misleading UDP
+   result — see the UDP rule above.
 6. **Wrong ESP-IDF version** (build errors, or `dependencies.lock` rewritten to e.g. `5.4.1`) →
    `idf.py fullclean`, delete `sdkconfig`, `git checkout -- dependencies.lock`, rebuild with v5.5.4.
 7. **Impossible throughput (e.g. 1000+ Mbit/s)** → a leftover iperf server from an earlier run; the

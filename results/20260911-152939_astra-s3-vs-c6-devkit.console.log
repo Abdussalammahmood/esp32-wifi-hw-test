@@ -1,0 +1,892 @@
+DUT   : Astra custom board (ESP32-S3R8, chip antenna) @ COM8
+REF   : ESP32-C6-DevKitC-1 (known good) @ COM10
+[COM8] ESP-ROM:esp32s3-20210327
+[COM8] Build:Mar 27 2021
+[COM8] rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+[COM8] SPIWP:0xee
+[COM8] mode:DIO, clock div:1
+[COM8] load:0x3fce2820,len:0x1668
+[COM8] load:0x403c8700,len:0xec0
+[COM8] load:0x403cb700,len:0x317c
+[COM8] entry 0x403c894c
+[COM8] I (24) boot: ESP-IDF v5.5.4 2nd stage bootloader
+[COM8] I (25) boot: compile time Sep 11 2026 15:23:22
+[COM8] I (25) boot: Multicore bootloader
+[COM8] I (25) boot: chip revision: v0.2
+[COM8] I (28) boot: efuse block revision: v1.4
+[COM8] I (31) qio_mode: Enabling QIO for flash chip WinBond
+[COM8] I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+[COM8] I (40) boot.esp32s3: SPI Mode       : QIO
+[COM8] I (44) boot.esp32s3: SPI Flash Size : 2MB
+[COM8] I (47) boot: Enabling RNG early entropy source...
+[COM8] I (52) boot: Partition Table:
+[COM8] I (54) boot: ## Label            Usage          Type ST Offset   Length
+[COM8] I (61) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+[COM8] I (67) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+[COM8] I (74) boot:  2 factory          factory app      00 00 00010000 00177000
+[COM8] I (80) boot: End of partition table
+[COM8] I (84) esp_image: segment 0: paddr=00010020 vaddr=3c0a0020 size=20954h (133460) map
+[COM8] I (111) esp_image: segment 1: paddr=0003097c vaddr=3fca0f00 size=04d10h ( 19728) load
+[COM8] I (115) esp_image: segment 2: paddr=00035694 vaddr=40378000 size=0a984h ( 43396) load
+[COM8] I (123) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=97470h (619632) map
+[COM8] I (215) esp_image: segment 4: paddr=000d7498 vaddr=40382984 size=0e534h ( 58676) load
+[COM8] I (227) esp_image: segment 5: paddr=000e59d4 vaddr=50000000 size=00020h (    32) load
+[COM8] I (237) boot: Loaded app from partition at offset 0x10000
+[COM8] I (237) boot: Disabling RNG early entropy source...
+[COM8] I (247) cpu_start: Multicore app
+[COM8] I (255) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+[COM8] I (256) cpu_start: Pro cpu start user code
+[COM8] I (256) cpu_start: cpu freq: 240000000 Hz
+[COM8] I (258) app_init: Application information:
+[COM8] I (262) app_init: Project name:     iperf
+[COM8] I (265) app_init: App version:      c0cb8e1-dirty
+[COM8] I (270) app_init: Compile time:     Sep 11 2026 15:22:53
+[COM8] I (275) app_init: ELF file SHA256:  d13bc56d4...
+[COM8] I (279) app_init: ESP-IDF:          v5.5.4
+[COM8] I (283) efuse_init: Min chip rev:     v0.0
+[COM8] I (287) efuse_init: Max chip rev:     v0.99
+[COM8] I (291) efuse_init: Chip rev:         v0.2
+[COM8] I (295) heap_init: Initializing. RAM available for dynamic allocation:
+[COM8] I (301) heap_init: At 3FCAA0F8 len 0003F618 (253 KiB): RAM
+[COM8] I (306) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+[COM8] I (311) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+[COM8] I (316) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+[COM8] I (322) spi_flash: detected chip: winbond
+[COM8] I (325) spi_flash: flash io: qio
+[COM8] W (328) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+[COM8] I (341) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+[COM8] I (347) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+[COM8] I (354) main_task: Started on CPU0
+[COM8] I (373) main_task: Calling app_main()
+[COM8] I (386) pp: pp rom version: e7ae62f
+[COM8] I (387) net80211: net80211 rom version: e7ae62f
+[COM8] I (388) wifi:wifi driver task: 3fcede8c, prio:23, stack:6656, core=0
+[COM8] I (395) wifi:wifi firmware version: 0947e8b
+[COM8] I (396) wifi:wifi certification version: v7.0
+[COM8] I (397) wifi:config NVS flash: enabled
+[COM8] I (400) wifi:config nano formatting: disabled
+[COM8] I (405) wifi:Init data frame dynamic rx buffer num: 64
+[COM8] I (409) wifi:Init static rx mgmt buffer num: 5
+[COM8] I (414) wifi:Init management short buffer num: 32
+[COM8] I (418) wifi:Init dynamic tx buffer num: 64
+[COM8] I (422) wifi:Init static tx FG buffer num: 2
+[COM8] I (426) wifi:Init static rx buffer size: 1600
+[COM8] I (430) wifi:Init static rx buffer num: 16
+[COM8] I (434) wifi:Init dynamic rx buffer num: 64
+[COM8] I (438) wifi_init: rx ba win: 32
+[COM8] I (441) wifi_init: accept mbox: 6
+[COM8] I (444) wifi_init: tcpip mbox: 64
+[COM8] I (447) wifi_init: udp mbox: 64
+[COM8] I (450) wifi_init: tcp mbox: 64
+[COM8] I (452) wifi_init: tcp tx win: 65535
+[COM8] I (456) wifi_init: tcp rx win: 65535
+[COM8] I (459) wifi_init: tcp mss: 1440
+[COM8] I (462) wifi_init: WiFi IRAM OP enabled
+[COM10] ESP-ROM:esp32c6-20220919
+[COM10] Build:Sep 19 2022
+[COM10] rst:0x1 (POWERON),boot:0xc (SPI_FAST_FLASH_BOOT)
+[COM10] SPIWP:0xee
+[COM10] mode:DIO, clock div:2
+[COM10] load:0x40875730,len:0x184c
+[COM10] load:0x4086b910,len:0x1098
+[COM10] load:0x4086e610,len:0x3294
+[COM10] entry 0x4086b91a
+[COM10] I (23) boot: ESP-IDF v5.5.4 2nd stage bootloader
+[COM10] I (24) boot: compile time Sep 11 2026 15:25:20
+[COM10] I (24) boot: chip revision: v0.0
+[COM10] I (25) boot: efuse block revision: v0.2
+[COM10] I (27) qio_mode: Enabling default flash chip QIO
+[COM10] I (31) boot.esp32c6: SPI Speed      : 80MHz
+[COM10] I (35) boot.esp32c6: SPI Mode       : QIO
+[COM10] I (39) boot.esp32c6: SPI Flash Size : 2MB
+[COM10] I (43) boot: Enabling RNG early entropy source...
+[COM10] I (47) boot: Partition Table:
+[COM10] I (50) boot: ## Label            Usage          Type ST Offset   Length
+[COM10] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+[COM10] I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+[COM10] I (69) boot:  2 factory          factory app      00 00 00010000 00177000
+[COM10] I (76) boot: End of partition table
+[COM10] I (79) esp_image: segment 0: paddr=00010020 vaddr=420b0020 size=24b4ch (150348) map
+[COM10] I (114) esp_image: segment 1: paddr=00034b74 vaddr=40800000 size=034a4h ( 13476) load
+[COM10] I (117) esp_image: segment 2: paddr=00038020 vaddr=42000020 size=a9b6ch (695148) map
+[COM10] I (242) esp_image: segment 3: paddr=000e1b94 vaddr=408034a4 size=23c40h (146496) load
+[COM10] I (280) boot: Loaded app from partition at offset 0x10000
+[COM10] I (281) boot: Disabling RNG early entropy source...
+[COM10] I (291) cpu_start: Unicore app
+[COM10] I (299) cpu_start: GPIO 17 and 16 are used as console UART I/O pins
+[COM10] I (299) cpu_start: Pro cpu start user code
+[COM10] I (299) cpu_start: cpu freq: 160000000 Hz
+[COM10] I (301) app_init: Application information:
+[COM10] I (305) app_init: Project name:     iperf
+[COM10] I (309) app_init: App version:      c0cb8e1-dirty
+[COM10] I (313) app_init: Compile time:     Sep 11 2026 15:24:54
+[COM10] I (318) app_init: ELF file SHA256:  c857e1a0a...
+[COM10] I (322) app_init: ESP-IDF:          v5.5.4
+[COM10] I (326) efuse_init: Min chip rev:     v0.0
+[COM10] I (330) efuse_init: Max chip rev:     v0.99
+[COM10] I (334) efuse_init: Chip rev:         v0.0
+[COM10] I (338) heap_init: Initializing. RAM available for dynamic allocation:
+[COM10] I (344) heap_init: At 4082CDA0 len 0004F870 (318 KiB): RAM
+[COM10] I (349) heap_init: At 4087C610 len 00002F54 (11 KiB): RAM
+[COM10] I (355) heap_init: At 50000000 len 00003FE8 (15 KiB): RTCRAM
+[COM10] I (360) spi_flash: detected chip: gd
+[COM10] I (363) spi_flash: flash io: qio
+[COM10] W (366) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+[COM10] I (379) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+[COM10] I (385) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+[COM10] I (391) main_task: Started on CPU0
+[COM10] I (409) main_task: Calling app_main()
+[COM10] I (414) pp: pp rom version: 5b8dcfa
+[COM10] I (414) net80211: net80211 rom version: 5b8dcfa
+[COM10] I (415) wifi:wifi driver task: 4083422c, prio:23, stack:6656, core=0
+[COM10] I (417) wifi:wifi firmware version: 0947e8b
+[COM10] I (420) wifi:wifi certification version: v7.0
+[COM10] I (424) wifi:config NVS flash: disabled
+[COM10] I (428) wifi:config nano formatting: disabled
+[COM10] I (432) wifi:mac_version:HAL_MAC_ESP32AX_761,ut_version:N, band mode:0x1
+[COM10] I (439) wifi:Init data frame dynamic rx buffer num: 60
+[COM10] I (443) wifi:Init static rx mgmt buffer num: 5
+[COM10] I (447) wifi:Init management short buffer num: 32
+[COM10] I (452) wifi:Init dynamic tx buffer num: 40
+[COM10] I (456) wifi:Init static tx FG buffer num: 2
+[COM10] I (460) wifi:Init static rx buffer size: 1700 (rxctrl:92, csi:512)
+[COM10] I (466) wifi:Init static rx buffer num: 40
+[COM10] I (469) wifi:Init dynamic rx buffer num: 60
+[COM10] I (474) wifi_init: rx ba win: 32
+[COM10] I (476) wifi_init: accept mbox: 6
+[COM10] I (479) wifi_init: tcpip mbox: 64
+[COM10] I (482) wifi_init: udp mbox: 64
+[COM10] I (485) wifi_init: tcp mbox: 64
+[COM10] I (488) wifi_init: tcp tx win: 51200
+[COM10] I (491) wifi_init: tcp rx win: 65535
+[COM10] I (495) wifi_init: tcp mss: 1440
+[COM10] I (498) wifi_init: WiFi IRAM OP enabled
+[COM10] I (501) wifi_init: WiFi RX IRAM OP enabled
+[COM10] I (505) wifi_init: WiFi SLP IRAM OP enabled
+[COM10] I (509) wifi_init: LWIP IRAM OP enabled
+[COM10] I (513) wifi:(2.4G)set country: cc=CN  schan=1 nchan=13 policy=0
+[COM10] I (519) phy_init: phy_version 343,b513b46,Nov 14 2025,16:34:12
+[COM10] W (524) phy_init: failed to load RF calibration data (0xffffffff), falling back to full calibration
+[COM10] I (569) phy_init: Saving new calibration data due to checksum failure or outdated calibration data, mode(2)
+[COM10] W (617) wifi:ACK_TAB0   :0x   90a0b, QAM16:0x9 (24Mbps), QPSK:0xa (12Mbps), BPSK:0xb (6Mbps)
+[COM10] W (618) wifi:CTS_TAB0   :0x   90a0b, QAM16:0x9 (24Mbps), QPSK:0xa (12Mbps), BPSK:0xb (6Mbps)
+[COM10] W (623) wifi:(agc)0x600a7128:0xd20e1800, min.avgNF:0xce->0xd2(dB), RCalCount:0xe1, min.RRssi:0x800(-128.00)
+[COM10] I (633) wifi:11ax coex: WDEVAX_PTI0(0x000a00a0), WDEVAX_PTI1(0x000072b9).
+[COM10] I (639) wifi:mode : sta (40:4c:ca:55:31:8c)
+[COM10] I (643) wifi:enable tsf
+[COM10] I (646) wifi:Set ps type: 0, coexist: 0
+[COM10] [5n
+[COM10]  ==================================================
+[COM10]  |       Steps to test WiFi throughput            |
+[COM10]  |                                                |
+[COM10]  |  1. Print 'help' to gain overview of commands  |
+[COM10]  |  2. Configure device to station or soft-AP     |
+[COM10]  |  3. Setup WiFi connection                      |
+[COM10]  |  4. Run iperf to test UDP/TCP RX/TX throughput |
+[COM10]  |                                                |
+[COM10]  =================================================
+[COM10] Type 'help' to get the list of commands.
+[COM10] Use UP/DOWN arrows to navigate through command history.
+[COM10] Press TAB when typing command name to auto-complete.
+[COM10] Your terminal application does not support escape sequences.
+[COM10] Line editing and history features are disabled.
+[COM10] On Windows, try using Windows Terminal or Putty instead.
+[COM10] iperf> I (1252) main_task: Returned from app_main()
+[COM8] ESP-ROM:esp32s3-20210327
+[COM8] Build:Mar 27 2021
+[COM8] rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+[COM8] SPIWP:0xee
+[COM8] mode:DIO, clock div:1
+[COM8] load:0x3fce2820,len:0x1668
+[COM8] load:0x403c8700,len:0xec0
+[COM8] load:0x403cb700,len:0x317c
+[COM8] entry 0x403c894c
+[COM8] I (24) boot: ESP-IDF v5.5.4 2nd stage bootloader
+[COM8] I (25) boot: compile time Sep 11 2026 15:23:22
+[COM8] I (25) boot: Multicore bootloader
+[COM8] I (25) boot: chip revision: v0.2
+[COM8] I (28) boot: efuse block revision: v1.4
+[COM8] I (31) qio_mode: Enabling QIO for flash chip WinBond
+[COM8] I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+[COM8] I (40) boot.esp32s3: SPI Mode       : QIO
+[COM8] I (44) boot.esp32s3: SPI Flash Size : 2MB
+[COM8] I (47) boot: Enabling RNG early entropy source...
+[COM8] I (52) boot: Partition Table:
+[COM8] I (54) boot: ## Label            Usage          Type ST Offset   Length
+[COM8] I (61) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+[COM8] I (67) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+[COM8] I (74) boot:  2 factory          factory app      00 00 00010000 00177000
+[COM8] I (80) boot: End of partition table
+[COM8] I (84) esp_image: segment 0: paddr=00010020 vaddr=3c0a0020 size=20954h (133460) map
+[COM8] I (111) esp_image: segment 1: paddr=0003097c vaddr=3fca0f00 size=04d10h ( 19728) load
+[COM8] I (115) esp_image: segment 2: paddr=00035694 vaddr=40378000 size=0a984h ( 43396) load
+[COM8] I (123) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=97470h (619632) map
+[COM8] I (215) esp_image: segment 4: paddr=000d7498 vaddr=40382984 size=0e534h ( 58676) load
+[COM8] I (227) esp_image: segment 5: paddr=000e59d4 vaddr=50000000 size=00020h (    32) load
+[COM8] I (237) boot: Loaded app from partition at offset 0x10000
+[COM8] I (237) boot: Disabling RNG early entropy source...
+[COM8] I (247) cpu_start: Multicore app
+[COM8] I (255) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+[COM8] I (256) cpu_start: Pro cpu start user code
+[COM8] I (256) cpu_start: cpu freq: 240000000 Hz
+[COM8] I (258) app_init: Application information:
+[COM8] I (262) app_init: Project name:     iperf
+[COM8] I (265) app_init: App version:      c0cb8e1-dirty
+[COM8] I (270) app_init: Compile time:     Sep 11 2026 15:22:53
+[COM8] I (275) app_init: ELF file SHA256:  d13bc56d4...
+[COM8] I (279) app_init: ESP-IDF:          v5.5.4
+[COM8] I (283) efuse_init: Min chip rev:     v0.0
+[COM8] I (287) efuse_init: Max chip rev:     v0.99
+[COM8] I (291) efuse_init: Chip rev:         v0.2
+[COM8] I (295) heap_init: Initializing. RAM available for dynamic allocation:
+[COM8] I (301) heap_init: At 3FCAA0F8 len 0003F618 (253 KiB): RAM
+[COM8] I (306) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+[COM8] I (311) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+[COM8] I (316) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+[COM8] I (322) spi_flash: detected chip: winbond
+[COM8] I (325) spi_flash: flash io: qio
+[COM8] W (328) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+[COM8] I (341) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+[COM8] I (347) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+[COM8] I (354) main_task: Started on CPU0
+[COM8] I (373) main_task: Calling app_main()
+[COM8] I (386) pp: pp rom version: e7ae62f
+[COM8] I (387) net80211: net80211 rom version: e7ae62f
+[COM8] I (388) wifi:wifi driver task: 3fcede8c, prio:23, stack:6656, core=0
+[COM8] I (395) wifi:wifi firmware version: 0947e8b
+[COM8] I (396) wifi:wifi certification version: v7.0
+[COM8] I (397) wifi:config NVS flash: enabled
+[COM8] I (400) wifi:config nano formatting: disabled
+[COM8] I (405) wifi:Init data frame dynamic rx buffer num: 64
+[COM8] I (409) wifi:Init static rx mgmt buffer num: 5
+[COM8] I (414) wifi:Init management short buffer num: 32
+[COM8] I (418) wifi:Init dynamic tx buffer num: 64
+[COM8] I (422) wifi:Init static tx FG buffer num: 2
+[COM8] I (426) wifi:Init static rx buffer size: 1600
+[COM8] I (430) wifi:Init static rx buffer num: 16
+[COM8] I (434) wifi:Init dynamic rx buffer num: 64
+[COM8] I (438) wifi_init: rx ba win: 32
+[COM8] I (441) wifi_init: accept mbox: 6
+[COM8] I (444) wifi_init: tcpip mbox: 64
+[COM8] I (447) wifi_init: udp mbox: 64
+[COM8] I (450) wifi_init: tcp mbox: 64
+[COM8] I (452) wifi_init: tcp tx win: 65535
+[COM8] I (456) wifi_init: tcp rx win: 65535
+[COM8] I (459) wifi_init: tcp mss: 1440
+[COM8] I (462) wifi_init: WiFi IRAM OP enabled
+[COM8] I (466) wifi_init: WiFi RX IRAM OP enabled
+[COM8] I (469) wifi_init: LWIP IRAM OP enabled
+[COM8] I (473) wifi:(2.4G)set country: cc=CN  schan=1 nchan=13 policy=0
+[COM8] I (480) phy_init: phy_version 711,97bcf0a2,Aug 25 2025,19:04:10
+[COM8] I (516) wifi:mode : sta (10:bd:a3:09:48:48)
+[COM8] I (517) wifi:enable tsf
+[COM8] I (518) wifi:Set ps type: 0, coexist: 0
+[COM8] [5n
+[COM8]  ==================================================
+[COM8]  |       Steps to test WiFi throughput            |
+[COM8]  |                                                |
+[COM8]  |  1. Print 'help' to gain overview of commands  |
+[COM8]  |  2. Configure device to station or soft-AP     |
+[COM8]  |  3. Setup WiFi connection                      |
+[COM8]  |  4. Run iperf to test UDP/TCP RX/TX throughput |
+[COM8]  |                                                |
+[COM8]  =================================================
+[COM8] Type 'help' to get the list of commands.
+[COM8] Use UP/DOWN arrows to navigate through command history.
+[COM8] Press TAB when typing command name to auto-complete.
+[COM8] Your terminal application does not support escape sequences.
+[COM8] Line editing and history features are disabled.
+[COM8] On Windows, try using Windows Terminal or Putty instead.
+[COM8] iperf> I (1121) main_task: Returned from app_main()
+[COM10] 6e610,len:?ESP-ROM:esp32c6-20220919
+[COM10] Build:Sep 19 2022
+[COM10] rst:0x1 (POWERON),boot:0xc (SPI_FAST_FLASH_BOOT)
+[COM10] SPIWP:0xee
+[COM10] mode:DIO, clock div:2
+[COM10] load:0x40875730,len:0x184c
+[COM10] load:0x4086b910,len:0x1098
+[COM10] load:0x4086e610,len:0x3294
+[COM10] entry 0x4086b91a
+[COM10] I (23) boot: ESP-IDF v5.5.4 2nd stage bootloader
+[COM10] I (24) boot: compile time Sep 11 2026 15:25:20
+[COM10] I (24) boot: chip revision: v0.0
+[COM10] I (25) boot: efuse block revision: v0.2
+[COM10] I (27) qio_mode: Enabling default flash chip QIO
+[COM10] I (31) boot.esp32c6: SPI Speed      : 80MHz
+[COM10] I (35) boot.esp32c6: SPI Mode       : QIO
+[COM10] I (39) boot.esp32c6: SPI Flash Size : 2MB
+[COM10] I (43) boot: Enabling RNG early entropy source...
+[COM10] I (47) boot: Partition Table:
+[COM10] I (50) boot: ## Label            Usage          Type ST Offset   Length
+[COM10] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+[COM10] I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+[COM10] I (69) boot:  2 factory          factory app      00 00 00010000 00177000
+[COM10] I (76) boot: End of partition table
+[COM10] I (79) esp_image: segment 0: paddr=00010020 vaddr=420b0020 size=24b4ch (150348) map
+[COM10] I (114) esp_image: segment 1: paddr=00034b74 vaddr=40800000 size=034a4h ( 13476) load
+[COM10] I (117) esp_image: segment 2: paddr=00038020 vaddr=42000020 size=a9b6ch (695148) map
+[COM10] I (242) esp_image: segment 3: paddr=000e1b94 vaddr=408034a4 size=23c40h (146496) load
+[COM10] I (280) boot: Loaded app from partition at offset 0x10000
+[COM10] I (281) boot: Disabling RNG early entropy source...
+[COM10] I (291) cpu_start: Unicore app
+[COM10] I (299) cpu_start: GPIO 17 and 16 are used as console UART I/O pins
+[COM10] I (299) cpu_start: Pro cpu start user code
+[COM10] I (299) cpu_start: cpu freq: 160000000 Hz
+[COM10] I (301) app_init: Application information:
+[COM10] I (305) app_init: Project name:     iperf
+[COM10] I (309) app_init: App version:      c0cb8e1-dirty
+[COM10] I (313) app_init: Compile time:     Sep 11 2026 15:24:54
+[COM10] I (318) app_init: ELF file SHA256:  c857e1a0a...
+[COM10] I (322) app_init: ESP-IDF:          v5.5.4
+[COM10] I (326) efuse_init: Min chip rev:     v0.0
+[COM10] I (330) efuse_init: Max chip rev:     v0.99
+[COM10] I (334) efuse_init: Chip rev:         v0.0
+[COM10] I (338) heap_init: Initializing. RAM available for dynamic allocation:
+[COM10] I (344) heap_init: At 4082CDA0 len 0004F870 (318 KiB): RAM
+[COM10] I (349) heap_init: At 4087C610 len 00002F54 (11 KiB): RAM
+[COM10] I (355) heap_init: At 50000000 len 00003FE8 (15 KiB): RTCRAM
+[COM10] I (360) spi_flash: detected chip: gd
+[COM10] I (363) spi_flash: flash io: qio
+[COM10] W (366) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+[COM10] I (379) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+[COM10] I (385) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+[COM10] I (391) main_task: Started on CPU0
+[COM10] I (409) main_task: Calling app_main()
+[COM10] I (414) pp: pp rom version: 5b8dcfa
+[COM10] I (414) net80211: net80211 rom version: 5b8dcfa
+[COM10] I (415) wifi:wifi driver task: 408342ac, prio:23, stack:6656, core=0
+[COM10] I (417) wifi:wifi firmware version: 0947e8b
+[COM10] I (420) wifi:wifi certification version: v7.0
+[COM10] I (424) wifi:config NVS flash: disabled
+[COM10] I (428) wifi:config nano formatting: disabled
+[COM10] I (432) wifi:mac_version:HAL_MAC_ESP32AX_761,ut_version:N, band mode:0x1
+[COM10] I (439) wifi:Init data frame dynamic rx buffer num: 60
+[COM10] I (443) wifi:Init static rx mgmt buffer num: 5
+[COM10] I (447) wifi:Init management short buffer num: 32
+[COM10] I (452) wifi:Init dynamic tx buffer num: 40
+[COM10] I (456) wifi:Init static tx FG buffer num: 2
+[COM10] I (460) wifi:Init static rx buffer size: 1700 (rxctrl:92, csi:512)
+[COM10] I (466) wifi:Init static rx buffer num: 40
+[COM10] I (470) wifi:Init dynamic rx buffer num: 60
+[COM10] I (474) wifi_init: rx ba win: 32
+[COM10] I (476) wifi_init: accept mbox: 6
+[COM10] I (479) wifi_init: tcpip mbox: 64
+[COM10] I (482) wifi_init: udp mbox: 64
+[COM10] I (485) wifi_init: tcp mbox: 64
+[COM10] I (488) wifi_init: tcp tx win: 51200
+[COM10] I (492) wifi_init: tcp rx win: 65535
+[COM10] I (495) wifi_init: tcp mss: 1440
+[COM10] I (498) wifi_init: WiFi IRAM OP enabled
+[COM10] I (501) wifi_init: WiFi RX IRAM OP enabled
+[COM10] I (505) wifi_init: WiFi SLP IRAM OP enabled
+[COM10] I (509) wifi_init: LWIP IRAM OP enabled
+[COM10] I (513) wifi:(2.4G)set country: cc=CN  schan=1 nchan=13 policy=0
+[COM10] I (519) phy_init: phy_version 343,b513b46,Nov 14 2025,16:34:12
+[COM10] W (566) wifi:ACK_TAB0   :0x   90a0b, QAM16:0x9 (24Mbps), QPSK:0xa (12Mbps), BPSK:0xb (6Mbps)
+[COM10] W (567) wifi:CTS_TAB0   :0x   90a0b, QAM16:0x9 (24Mbps), QPSK:0xa (12Mbps), BPSK:0xb (6Mbps)
+[COM10] W (572) wifi:(agc)0x600a7128:0xd21f0c20, min.avgNF:0xce->0xd2(dB), RCalCount:0x1f0, min.RRssi:0xc20(-62.00)
+[COM10] I (581) wifi:11ax coex: WDEVAX_PTI0(0x000a00a0), WDEVAX_PTI1(0x000072b9).
+[COM10] I (588) wifi:mode : sta (40:4c:ca:55:31:8c)
+[COM10] I (592) wifi:enable tsf
+[COM10] I (595) wifi:Set ps type: 0, coexist: 0
+[COM10] [5n
+[COM10]  ==================================================
+[COM10]  |       Steps to test WiFi throughput            |
+[COM10]  |                                                |
+[COM10]  |  1. Print 'help' to gain overview of commands  |
+[COM10]  |  2. Configure device to station or soft-AP     |
+[COM10]  |  3. Setup WiFi connection                      |
+[COM10]  |  4. Run iperf to test UDP/TCP RX/TX throughput |
+[COM10]  |                                                |
+[COM10]  =================================================
+[COM10] Type 'help' to get the list of commands.
+[COM10] Use UP/DOWN arrows to navigate through command history.
+[COM10] Press TAB when typing command name to auto-complete.
+[COM10] Your terminal application does not support escape sequences.
+[COM10] Line editing and history features are disabled.
+[COM10] On Windows, try using Windows Terminal or Putty instead.
+[COM10] iperf> I (1201) main_task: Returned from app_main()
+
+===== SCAN on dut (COM8) =====
+>>> [COM8] wifi_mode sta
+[COM8] wifi_mode sta
+[COM8] I (7917) WIFI: mode: sta
+[COM8] I (7918) WIFI: DONE.SET_WIFI_MODE,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM8] scan
+[COM8] scan
+[COM8] W (9661) WIFI: 'scan' is deprecated, please use 'sta_scan'.
+[COM8] I (9662) WIFI: DONE.STA_SCAN_START,OK.
+[COM8] iperf>
+[COM8] iperf>
+[COM8] I (12066) WIFI: +SCAN:[42:84:b5:fb:88:0f][IOT][rssi=-48][auth=wpa2][ch=1]
+[COM8] I (12067) WIFI: +SCAN:[42:84:b5:fb:88:11][IOT_Guest][rssi=-48][auth=wpa2][ch=1]
+[COM8] I (12079) WIFI: +SCAN:[42:84:b5:fb:88:1d][IOT_Wi-Fi5][rssi=-48][auth=wpa2][ch=1]
+[COM8] I (12080) WIFI: +SCAN:[8c:de:f9:33:97:f8][OpenVp_2.4G][rssi=-49][auth=wpa2][ch=1]
+[COM8] I (12092) WIFI: +SCAN:[b6:e4:f6:6d:6a:f4][nova 13][rssi=-71][auth=wpa2][ch=9]
+[COM8] I (12092) WIFI: +SCAN:[14:84:73:40:0f:a1][HaycoAP2][rssi=-72][auth=wpa2_enterprise][ch=6]
+[COM8] I (12104) WIFI: +SCAN:[14:84:73:40:0f:a2][haycoap1][rssi=-72][auth=wpa2][ch=6]
+[COM8] I (12105) WIFI: +SCAN:[14:84:73:3f:f1:c1][HaycoAP2][rssi=-80][auth=wpa2_enterprise][ch=1]
+[COM8] I (12117) WIFI: +SCAN:[00:2a:10:f8:9b:81][haycoguestap][rssi=-83][auth=open][ch=1]
+[COM8] I (12129) WIFI: +SCAN:[00:2a:10:f8:9b:82][Haycoguest][rssi=-84][auth=open][ch=1]
+[COM8] I (12129) WIFI: +SCAN:[14:84:73:3f:f1:c2][haycoap1][rssi=-85][auth=wpa2][ch=1]
+[COM8] I (12141) WIFI: +SCAN:[84:3d:c6:14:3f:31][haycoguestap][rssi=-86][auth=open][ch=11]
+[COM8] I (12142) WIFI: +SCAN:[14:84:73:3f:cf:a2][haycoap1][rssi=-89][auth=wpa2][ch=1]
+[COM8] I (12154) WIFI: +SCAN:[a2:69:38:82:f7:c2][IOT_Wi-Fi5][rssi=-90][auth=wpa2][ch=1]
+[COM8] I (12166) WIFI: SCAN_DONE: Found 14 APs
+
+===== SCAN on reference (COM10) =====
+>>> [COM10] wifi_mode sta
+[COM10] wifi_mode sta
+[COM10] I (20062) WIFI: mode: sta
+[COM10] I (20063) WIFI: DONE.SET_WIFI_MODE,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] scan
+[COM10] scan
+[COM10] W (21714) WIFI: 'scan' is deprecated, please use 'sta_scan'.
+[COM10] I (21715) WIFI: DONE.STA_SCAN_START,OK.
+[COM10] iperf>
+[COM10] iperf>
+[COM10] I (24120) WIFI: +SCAN:[42:84:b5:fb:88:11][IOT_Guest][rssi=-36][auth=wpa2][ch=1]
+[COM10] I (24121) WIFI: +SCAN:[8c:de:f9:33:97:f8][OpenVp_2.4G][rssi=-38][auth=wpa2][ch=1]
+[COM10] I (24124) WIFI: +SCAN:[42:84:b5:fb:88:0f][IOT][rssi=-38][auth=wpa2][ch=1]
+[COM10] I (24130) WIFI: +SCAN:[42:84:b5:fb:88:1d][IOT_Wi-Fi5][rssi=-38][auth=wpa2][ch=1]
+[COM10] I (24139) WIFI: +SCAN:[b6:e4:f6:6d:6a:f4][nova 13][rssi=-59][auth=wpa2][ch=9]
+[COM10] I (24145) WIFI: +SCAN:[14:84:73:40:0f:a1][HaycoAP2][rssi=-69][auth=wpa2_enterprise][ch=6]
+[COM10] I (24154) WIFI: +SCAN:[14:84:73:40:0f:a2][haycoap1][rssi=-70][auth=wpa2][ch=6]
+[COM10] I (24160) WIFI: +SCAN:[00:2a:10:f8:9b:82][Haycoguest][rssi=-75][auth=open][ch=1]
+[COM10] I (24166) WIFI: +SCAN:[00:2a:10:f8:9b:81][haycoguestap][rssi=-77][auth=open][ch=1]
+[COM10] I (24175) WIFI: +SCAN:[84:3d:c6:14:3f:32][Haycoguest][rssi=-78][auth=open][ch=11]
+[COM10] I (24181) WIFI: +SCAN:[84:3d:c6:14:3f:31][haycoguestap][rssi=-78][auth=open][ch=11]
+[COM10] I (24190) WIFI: +SCAN:[14:84:73:40:22:41][HaycoAP2][rssi=-82][auth=wpa2_enterprise][ch=6]
+[COM10] I (24196) WIFI: +SCAN:[dc:31:d1:20:bd:33][vivo X23 ???][rssi=-86][auth=wpa2][ch=13]
+[COM10] I (24204) WIFI: +SCAN:[a2:69:38:82:f7:c2][IOT_Wi-Fi5][rssi=-89][auth=wpa2][ch=1]
+[COM10] I (24211) WIFI: +SCAN:[14:84:73:40:29:61][HaycoAP2][rssi=-92][auth=wpa2_enterprise][ch=11]
+[COM10] I (24219) WIFI: SCAN_DONE: Found 15 APs
+
+===== SoftAP on reference (COM10) =====
+>>> [COM10] wifi_mode ap
+[COM10] wifi_mode ap
+[COM10] I (36876) WIFI: mode: ap
+[COM10] W (36876) wifi:(itwt)itwt_stop_process!
+[COM10] I (36877) wifi:mode : softAP (40:4c:ca:55:31:8d)
+[COM10] I (36878) wifi:Total power save buffer number: 20
+[COM10] I (36881) wifi:Init max length of beacon: 752/752
+[COM10] I (36884) wifi:Init max length of beacon: 752/752
+[COM10] I (36891) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+[COM10] I (36897) WIFI: WIFI_EVENT_AP_START
+[COM10] I (36891) WIFI: DONE.SET_WIFI_MODE,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] ap_set WIFI_HW_TEST test12345
+[COM10] ap_set WIFI_HW_TEST test12345
+[COM10] I (39130) wifi:Total power save buffer number: 20
+[COM10] I (39131) WIFI: WIFI_EVENT_AP_STOP
+[COM10] I (39131) esp_netif_lwip: DHCP server started on interface WIFI_AP_DEF with IP: 192.168.4.1
+[COM10] I (39135) WIFI: WIFI_EVENT_AP_START
+[COM10] I (39132) WIFI: DONE.SET_AP_CONFIG,OK.
+[COM10] iperf>
+[COM10] iperf>
+
+===== ASSOCIATE dut -> WIFI_HW_TEST =====
+--- attempt 1 ---
+>>> [COM8] sta_connect WIFI_HW_TEST test12345
+[COM8] sta_connect WIFI_HW_TEST test12345
+[COM8] I (50947) WIFI: Connecting to WIFI_HW_TEST...
+[COM8] I (50956) WIFI: DONE.WIFI_CONNECT_START,OK.
+[COM8] iperf>
+[COM8] iperf> I (50965) wifi:new:<1,1>, old:<1,0>, ap:<255,255>, sta:<1,1>, prof:1, snd_ch_cfg:0x0
+[COM8] I (50966) wifi:state: init -> auth (0xb0)
+[COM8] I (50972) wifi:state: auth -> assoc (0x0)
+[COM8] I (51027) wifi:state: assoc -> run (0x10)
+[COM8] I (51038) wifi:connected with WIFI_HW_TEST, aid = 1, channel 1, 40U, bssid = 40:4c:ca:55:31:8d
+[COM8] I (51039) wifi:security: WPA2-PSK, phy: bgn, rssi: -24, cipher(pairwise:0x3, group:0x3), pmf:1
+[COM8] I (51053) wifi:pm start, type: 0
+[COM8] I (51054) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+[COM8] I (51055) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+[COM8] I (51067) WIFI: WIFI_EVENT_STA_CONNECTED!
+[COM8] I (51068) WIFI: STA_CONNECTED_AUTH:3
+[COM8] I (51137) wifi:dp: 2, bi: 102400, li: 4, scale listen interval from 307200 us to 409600 us
+[COM8] I (51138) wifi:AP's beacon interval = 102400 us, DTIM period = 2
+[COM8] I (52085) esp_netif_handlers: sta ip: 192.168.4.2, mask: 255.255.255.0, gw: 192.168.4.1
+[COM8] I (52086) WIFI: IP_EVENT_STA_GOT_IP: Interface "sta" address: 192.168.4.2
+[COM8] I (52097) WIFI: - IPv4 address: 192.168.4.2,
+[COM8] I (52386) WIFI: IP_EVENT_GOT_IP6: Interface "sta" address: fe80:0000:0000:0000:12bd:a3ff:fe09:4848, type: 2
+[COM8] I (52387) WIFI: - IPv6 address: fe80:0000:0000:0000:12bd:a3ff:fe09:4848, type: 2
+
+===== PING 192.168.4.2 -> 192.168.4.1 =====
+>>> [COM8] ping 192.168.4.1
+[COM8] ping 192.168.4.1
+[COM8] PING 192.168.4.1 (192.168.4.1) 64 data bytes
+[COM8] iperf>
+[COM8] iperf> I (54352) wifi:<ba-add>idx:0 (ifx:0, 40:4c:ca:55:31:8d), tid:0, ssn:0, winSize:64
+[COM8] 64 bytes from 192.168.4.1: icmp_seq=1 ttl=64 time=53 ms
+[COM8] 64 bytes from 192.168.4.1: icmp_seq=2 ttl=64 time=1 ms
+[COM8] 64 bytes from 192.168.4.1: icmp_seq=3 ttl=64 time=3 ms
+[COM8] 64 bytes from 192.168.4.1: icmp_seq=4 ttl=64 time=54 ms
+[COM8] 64 bytes from 192.168.4.1: icmp_seq=5 ttl=64 time=20 ms
+[COM8] --- 192.168.4.1 ping statistics ---
+[COM8] 5 packets transmitted, 5 received, 0% packet loss, time 131ms
+
+===== TCP TX: DUT -> reference =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] I (66476) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] I (63364) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] iperf -s -i 2
+[COM10] iperf -s -i 2
+[COM10] I (65025) IPERF: mode=tcp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM10] I (65026) iperf: Socket created
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -c 192.168.4.1 -i 2 -t 15
+[COM8] iperf -c 192.168.4.1 -i 2 -t 15
+[COM8] I (71955) IPERF: mode=tcp-client sip=localhost:5001, dip=192.168.4.1:5001, interval=2, time=15
+[COM8] iperf>
+[COM8] iperf> I (72086) iperf: Successfully connected
+[COM8] Interval       Bandwidth
+[COM8]  0.0- 2.0 sec  25.56 Mbits/sec
+[COM8]  2.0- 4.0 sec  25.69 Mbits/sec
+[COM8]  4.0- 6.0 sec  25.25 Mbits/sec
+[COM8]  6.0- 8.0 sec  26.25 Mbits/sec
+[COM8]  8.0-10.0 sec  28.06 Mbits/sec
+[COM8] 10.0-12.0 sec  25.75 Mbits/sec
+[COM8] 12.0-14.0 sec  27.81 Mbits/sec
+[COM8] 14.0-16.0 sec  27.25 Mbits/sec
+[COM8]  0.0-15.0 sec  26.45 Mbits/sec
+[COM8] I (88100) iperf: TCP Socket client is closed.
+[COM8] I (88100) iperf: iperf exit
+
+===== TCP RX: reference -> DUT =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] I (93047) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] I (89925) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -s -i 2
+[COM8] iperf -s -i 2
+[COM8] I (96400) IPERF: mode=tcp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM8] iperf> I (96401) iperf: Socket created
+[COM8] iperf>
+>>> [COM10] iperf -c 192.168.4.2 -i 2 -t 15
+[COM10] iperf -c 192.168.4.2 -i 2 -t 15
+[COM10] I (93722) IPERF: mode=tcp-client sip=localhost:5001, dip=192.168.4.2:5001, interval=2, time=15
+[COM10] iperf> I (93724) iperf: Successfully connected
+[COM10] Interval       Bandwidth
+[COM10] iperf>
+[COM10]  0.0- 2.0 sec  22.06 Mbits/sec
+[COM10]  2.0- 4.0 sec  20.50 Mbits/sec
+[COM10]  4.0- 6.0 sec  20.75 Mbits/sec
+[COM10]  6.0- 8.0 sec  19.69 Mbits/sec
+[COM10]  8.0-10.0 sec  15.69 Mbits/sec
+[COM10] 10.0-12.0 sec  22.56 Mbits/sec
+[COM10] 12.0-14.0 sec  19.69 Mbits/sec
+[COM10] 14.0-16.0 sec  20.38 Mbits/sec
+[COM10]  0.0-15.0 sec  20.16 Mbits/sec
+[COM10] I (109735) iperf: TCP Socket client is closed.
+[COM10] I (109736) iperf: iperf exit
+
+===== UDP TX: DUT -> reference =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] I (119670) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] I (116553) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] iperf -s -u -i 2
+[COM10] iperf -s -u -i 2
+[COM10] I (118188) IPERF: mode=udp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM10] I (118189) iperf: Socket created
+[COM10] I (118189) iperf: Socket bound, port 35091
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -c 192.168.4.1 -u -b 40 -i 2 -t 10
+[COM8] iperf -c 192.168.4.1 -u -b 40 -i 2 -t 10
+[COM8] I (125111) IPERF: mode=udp-client sip=localhost:5001, dip=192.168.4.1:5001, interval=2, time=10
+[COM8] iperf> I (125113) iperf: Socket created, sending to 17082560:5001
+[COM8] Interval       Bandwidth
+[COM8] iperf>
+[COM8]  0.0- 2.0 sec  33.51 Mbits/sec
+[COM8]  2.0- 4.0 sec  30.91 Mbits/sec
+[COM8]  4.0- 6.0 sec  33.35 Mbits/sec
+[COM8]  6.0- 8.0 sec  29.52 Mbits/sec
+[COM8]  8.0-10.0 sec  29.94 Mbits/sec
+[COM8]  0.0-10.0 sec  31.45 Mbits/sec
+[COM8] I (135127) iperf: UDP Socket client is closed
+[COM8] I (135127) iperf: iperf exit
+
+===== UDP RX: reference -> DUT =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] I (141297) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] W (138182) iperf: udp server recv error, error code: 128, reason: Socket is not connected
+[COM10] I (138183) iperf: Udp socket server is closed.
+[COM10] I (138183) iperf: iperf exit
+[COM10] I (138183) iperf: wait current iperf to stop ...
+[COM10] 16.0-18.0 sec  0.00 Mbits/sec
+[COM10] I (138592) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -s -u -i 2
+[COM8] iperf -s -u -i 2
+[COM8] I (144655) IPERF: mode=udp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM8] iperf> I (144656) iperf: Socket created
+[COM8] I (144664) iperf: Socket bound, port 35091
+[COM8] iperf>
+>>> [COM10] iperf -c 192.168.4.2 -u -b 40 -i 2 -t 10
+[COM10] iperf -c 192.168.4.2 -u -b 40 -i 2 -t 10
+[COM10] I (142027) IPERF: mode=udp-client sip=localhost:5001, dip=192.168.4.2:5001, interval=2, time=10
+[COM10] I (142027) iperf: Socket created, sending to 33859776:5001
+[COM10] Interval       Bandwidth
+[COM10]  0.0- 2.0 sec  21.86 Mbits/sec
+[COM10]  2.0- 4.0 sec  23.61 Mbits/sec
+[COM10]  4.0- 6.0 sec  25.37 Mbits/sec
+[COM10]  6.0- 8.0 sec  26.19 Mbits/sec
+[COM10]  8.0-10.0 sec  25.46 Mbits/sec
+[COM10]  0.0-10.0 sec  24.50 Mbits/sec
+[COM10] I (152034) iperf: UDP Socket client is closed
+[COM10] I (152035) iperf: iperf exit
+[COM10] iperf>
+[COM10] iperf>
+
+===== UDP TX sweep at 20 Mbit/s offered =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] W (162989) iperf: udp server recv error, error code: 128, reason: Socket is not connected
+[COM8] I (162989) iperf: wait current iperf to stop ...
+[COM8] I (162990) iperf: Udp socket server is closed.
+[COM8] I (163002) iperf: iperf exit
+[COM8] I (163390) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] I (159823) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] iperf -s -u -i 2
+[COM10] iperf -s -u -i 2
+[COM10] I (161482) IPERF: mode=udp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM10] I (161483) iperf: Socket created
+[COM10] I (161483) iperf: Socket bound, port 35091
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -c 192.168.4.1 -u -b 20 -i 2 -t 10
+[COM8] iperf -c 192.168.4.1 -u -b 20 -i 2 -t 10
+[COM8] I (168421) IPERF: mode=udp-client sip=localhost:5001, dip=192.168.4.1:5001, interval=2, time=10
+[COM8] iperf> I (168422) iperf: Socket created, sending to 17082560:5001
+[COM8] Interval       Bandwidth
+[COM8] iperf>
+[COM8]  0.0- 2.0 sec  18.61 Mbits/sec
+[COM8]  2.0- 4.0 sec  19.05 Mbits/sec
+[COM8]  4.0- 6.0 sec  19.05 Mbits/sec
+[COM8]  6.0- 8.0 sec  18.13 Mbits/sec
+[COM8]  8.0-10.0 sec  17.81 Mbits/sec
+[COM8]  0.0-10.0 sec  18.53 Mbits/sec
+[COM8] I (178437) iperf: UDP Socket client is closed
+[COM8] I (178438) iperf: iperf exit
+
+===== UDP TX sweep at 30 Mbit/s offered =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] I (184621) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] W (181501) iperf: udp server recv error, error code: 128, reason: Socket is not connected
+[COM10] I (181502) iperf: Udp socket server is closed.
+[COM10] I (181502) iperf: iperf exit
+[COM10] I (181502) iperf: wait current iperf to stop ...
+[COM10] 16.0-18.0 sec  0.00 Mbits/sec
+[COM10] I (181911) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] iperf -s -u -i 2
+[COM10] iperf -s -u -i 2
+[COM10] I (183148) IPERF: mode=udp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM10] I (183148) iperf: Socket created
+[COM10] I (183149) iperf: Socket bound, port 35091
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -c 192.168.4.1 -u -b 30 -i 2 -t 10
+[COM8] iperf -c 192.168.4.1 -u -b 30 -i 2 -t 10
+[COM8] I (190088) IPERF: mode=udp-client sip=localhost:5001, dip=192.168.4.1:5001, interval=2, time=10
+[COM8] iperf> I (190089) iperf: Socket created, sending to 17082560:5001
+[COM8] Interval       Bandwidth
+[COM8] iperf>
+[COM8]  0.0- 2.0 sec  27.29 Mbits/sec
+[COM8]  2.0- 4.0 sec  26.30 Mbits/sec
+[COM8]  4.0- 6.0 sec  23.25 Mbits/sec
+[COM8]  6.0- 8.0 sec  21.32 Mbits/sec
+[COM8]  8.0-10.0 sec  26.77 Mbits/sec
+[COM8]  0.0-10.0 sec  24.99 Mbits/sec
+[COM8] I (200104) iperf: UDP Socket client is closed
+[COM8] I (200104) iperf: iperf exit
+
+===== UDP TX sweep at 40 Mbit/s offered =====
+>>> [COM8] iperf --abort
+[COM8] iperf --abort
+[COM8] I (206282) iperf: DONE.IPERF_STOP,OK.
+[COM8] iperf>
+[COM8] iperf>
+>>> [COM10] iperf --abort
+[COM10] iperf --abort
+[COM10] W (203177) iperf: udp server recv error, error code: 128, reason: Socket is not connected
+[COM10] I (203178) iperf: Udp socket server is closed.
+[COM10] I (203178) iperf: iperf exit
+[COM10] I (203178) iperf: wait current iperf to stop ...
+[COM10] 16.0-18.0 sec  0.00 Mbits/sec
+[COM10] I (203587) iperf: DONE.IPERF_STOP,OK.
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM10] iperf -s -u -i 2
+[COM10] iperf -s -u -i 2
+[COM10] I (204816) IPERF: mode=udp-server sip=localhost:5001, dip=0.0.0.0:5001, interval=2, time=30
+[COM10] I (204817) iperf: Socket created
+[COM10] I (204817) iperf: Socket bound, port 35091
+[COM10] iperf>
+[COM10] iperf>
+>>> [COM8] iperf -c 192.168.4.1 -u -b 40 -i 2 -t 10
+[COM8] iperf -c 192.168.4.1 -u -b 40 -i 2 -t 10
+[COM8] I (211727) IPERF: mode=udp-client sip=localhost:5001, dip=192.168.4.1:5001, interval=2, time=10
+[COM8] iperf> I (211728) iperf: Socket created, sending to 17082560:5001
+[COM8] Interval       Bandwidth
+[COM8] iperf>
+[COM8]  0.0- 2.0 sec  32.38 Mbits/sec
+[COM8]  2.0- 4.0 sec  31.11 Mbits/sec
+[COM8]  4.0- 6.0 sec  33.80 Mbits/sec
+[COM8]  6.0- 8.0 sec  33.79 Mbits/sec
+[COM8]  8.0-10.0 sec  34.68 Mbits/sec
+[COM8]  0.0-10.0 sec  33.15 Mbits/sec
+[COM8] I (221743) iperf: UDP Socket client is closed
+[COM8] I (221743) iperf: iperf exit
+
+# WiFi hardware test report — astra-s3-vs-c6-devkit
+
+- **Started:** 2026-09-11T15:25:44
+- **Finished:** 2026-09-11T15:29:39
+- **Result: ? PASS**
+- ?? Measured with ESP-IDF v5.5.4 and the iperf example's own sdkconfig.defaults.esp32s3 (the 'iperf rank' buffers). Espressif's published reference figures were measured on IDF commit 15575346 (2021-04-21) for ESP32/S2/S3/C3 and 7ff0a07d (2024-12-14) for ESP32-C6 - so they are a reference, not a spec for this build.
+- ?? Reference is an ESP32-C6-DevKitC-1 (devkit antenna, different chip) while the DUT uses a small chip antenna on a compact board, so the scan/RSSI-delta verdict is INDICATIVE only. A conclusive antenna verdict needs an identical DUT board as the reference.
+- ?? rssi_delta_db_max is relaxed to 20 dB here for that mixed-antenna comparison; the strict default in config/thresholds.json is 8 dB.
+- ?? Official air/shield columns in the report are Espressif's best-case figures (shield-box needs a shielded box + router peer). They are reference only and never affect PASS/FAIL.
+
+## Boards
+
+| Role | Name | Port | Chip | MAC | Features |
+|---|---|---|---|---|---|
+| DUT (device under test) | Astra custom board (ESP32-S3R8, chip antenna) | COM8 | ESP32-S3 | 10:bd:a3:09:48:48 | WiFi, BLE, Embedded PSRAM 8MB (AP_3v3) |
+| Reference (known good) | ESP32-C6-DevKitC-1 (known good) | COM10 | ESP32-C6 | 40:4c:ca:ff:fe:55 | Wi-Fi 6, BT 5 (LE), IEEE802.15.4, Single Core +  |
+
+## Provenance (which firmware produced these numbers)
+
+| Role | ESP-IDF | WiFi firmware | PHY version |
+|---|---|---|---|
+| DUT | 5.5.4 | 0947e8b | 711,97bcf0a2,A |
+| Reference | 5.5.4 | 0947e8b | 343,b513b46, |
+
+> Official reference figures below were measured by Espressif on IDF commit `15575346` (2021-04-21) - **not** on the IDF version used for this run.
+
+## Verdicts
+
+| Test | Result | Detail |
+|---|---|---|
+| scan (RX sensitivity vs reference) | ? PASS | 14 APs vs 15 reference (93%), 11 common BSSIDs, median RSSI delta -9.0 dB |
+| association | ? PASS | ip=192.168.4.2 rssi=-24 dBm (min -70) |
+| ping | ? PASS | 5/5 replies, loss 0%, avg 26 ms |
+| TCP TX (DUT -> reference) | ? PASS | 26.45 Mbit/s avg (min 25.25, max 28.06) floor 15 |
+| TCP RX (reference -> DUT) | ? PASS | 20.16 Mbit/s avg (min 15.69, max 22.56) floor 15 |
+| UDP TX (DUT -> reference) | ? PASS | 31.45 Mbit/s avg (min 29.52, max 33.51) floor 12; offered -b 40 Mbit/s - link ceiling below the offer, so this is a real measurement |
+| UDP RX (reference -> DUT) | ? PASS | 24.50 Mbit/s avg (min 21.86, max 26.19) floor 12; offered -b 40 Mbit/s - link ceiling below the offer, so this is a real measurement |
+
+## Scan comparison (same environment, same moment)
+
+- DUT: **14 APs**; reference: **15 APs**
+
+| SSID | BSSID | DUT RSSI | ref RSSI | delta |
+|---|---|---|---|---|
+| haycoguestap | 00:2a:10:f8:9b:81 | -83 | -77 | -6 |
+| Haycoguest | 00:2a:10:f8:9b:82 | -84 | -75 | -9 |
+| HaycoAP2 | 14:84:73:40:0f:a1 | -72 | -69 | -3 |
+| haycoap1 | 14:84:73:40:0f:a2 | -72 | -70 | -2 |
+| IOT | 42:84:b5:fb:88:0f | -48 | -38 | -10 |
+| IOT_Guest | 42:84:b5:fb:88:11 | -48 | -36 | -12 |
+| IOT_Wi-Fi5 | 42:84:b5:fb:88:1d | -48 | -38 | -10 |
+| haycoguestap | 84:3d:c6:14:3f:31 | -86 | -78 | -8 |
+| OpenVp_2.4G | 8c:de:f9:33:97:f8 | -49 | -38 | -11 |
+| IOT_Wi-Fi5 | a2:69:38:82:f7:c2 | -90 | -89 | -1 |
+| nova 13 | b6:e4:f6:6d:6a:f4 | -71 | -59 | -12 |
+
+## Link
+
+- DUT associated: `ip=192.168.4.2`, RSSI `-24 dBm`
+- Ping: 5/5 replies, avg 26 ms, max 54 ms
+
+## Throughput
+
+| Test | DUT avg | min | max | reference baseline | ratio | official air | official shield |
+|---|---|---|---|---|---|---|---|
+| TCP TX (DUT ? ref) | 26.45 Mbit/s | 25.25 | 28.06 | not measured | — | 20 Mbit/s | 83 Mbit/s |
+| TCP RX (ref ? DUT) | 20.16 Mbit/s | 15.69 | 22.56 | not measured | — | 20 Mbit/s | 73 Mbit/s |
+| UDP TX (DUT ? ref) @ `-b 40` offered | 31.45 Mbit/s | 29.52 | 33.51 | not measured | — | 30 Mbit/s | 98 Mbit/s |
+| UDP RX (ref ? DUT) @ `-b 40` offered | 24.50 Mbit/s | 21.86 | 26.19 | not measured | — | 30 Mbit/s | 88 Mbit/s |
+
+`official air` / `official shield` are Espressif's published best-case figures for ESP32-S3 (IDF commit 15575346, 2021-04-21) - **reference only, never used as a pass/fail limit**; the shield-box column needs a shielded box and a router peer. ESP-IDF docs, 'Wi-Fi Performance and Power Save', per-target page: https://docs.espressif.com/projects/esp-idf/en/v6.0/<chip>/api-guides/wifi-driver/wifi-performance-and-power-save.html
+
+`-b` is the **offered** UDP load, in Mbit/s: iperf never reports more than it was asked to send, so the UDP rows are only meaningful together with the offer shown. An offer below the link's real capacity caps the result; run at `-b 40` (above the 30 Mbit/s documented air figure) to measure the link instead of the offer.
+
+### UDP offered-load sweep (DUT ? ref, reference only)
+
+| Offered `-b` | Achieved avg | min | max | reading |
+|---|---|---|---|---|
+| 20 Mbit/s | 18.53 Mbit/s | 17.81 | 19.05 | capped by the offer |
+| 30 Mbit/s | 24.99 Mbit/s | 21.32 | 27.29 | link ceiling |
+| 40 Mbit/s | 33.15 Mbit/s | 31.11 | 34.68 | link ceiling |
+
+`-b` is the **offered load** in Mbit/s — iperf never reports more than it was asked to send, so `achieved ˜ offered` means the offer, not the link, set the number. Raise `-b` until the achieved value stops rising; that plateau is the link ceiling.
+
+## Run log
+
+- SCAN on dut (COM8)
+- SCAN on reference (COM10)
+- SoftAP on reference (COM10)
+- ASSOCIATE dut -> WIFI_HW_TEST
+- PING 192.168.4.2 -> 192.168.4.1
+- TCP TX: DUT -> reference
+- TCP RX: reference -> DUT
+- UDP TX: DUT -> reference
+- UDP RX: reference -> DUT
+- UDP TX sweep at 20 Mbit/s offered
+- UDP TX sweep at 30 Mbit/s offered
+- UDP TX sweep at 40 Mbit/s offered
+
+## How to reproduce
+
+```
+python wifi_hw_test.py --config <this config> --out results/
+```
+
+
+Report written: results/20260911-152939_astra-s3-vs-c6-devkit.md

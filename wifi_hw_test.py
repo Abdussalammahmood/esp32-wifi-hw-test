@@ -363,7 +363,10 @@ class WifiTest:
                 self.result["notes"].append("DUT failed to associate - remaining data tests skipped")
 
         iv, tcp, udp = self.dur.get("interval", 2), self.dur.get("tcp", 15), self.dur.get("udp", 10)
-        bw = self.dur.get("udp_bitrate", 20)
+        # -b is the OFFERED load (Mbit/s), not a measurement limit: iperf never reports more than it
+        # was asked to send, so the offer must sit at or above the expected capacity or the result is
+        # capped by the offer instead of by the link.
+        bw = self.dur.get("udp_bitrate", 40)
         T = self.result["tests"]
 
         if self.dut_ip:
@@ -419,14 +422,14 @@ class WifiTest:
         return self.result
 
     # -- iperf helpers (DUT as client, then DUT as server)
-    def _iperf_dut_tx(self, seconds, iv, udp=False, bitrate=20) -> dict:
+    def _iperf_dut_tx(self, seconds, iv, udp=False, bitrate=40) -> dict:
         flag = " -u -b %d" % bitrate if udp else ""
         self.stop_iperf("dut", "reference")
         self.ref.send("iperf -s%s -i %d" % (" -u" if udp else "", iv), 2)
         lines = self.dut.send("iperf -c %s%s -i %d -t %d" % (self.ap["ip"], flag, iv, seconds), seconds + 6)
         return parse_throughput(lines, iv)
 
-    def _iperf_dut_rx(self, seconds, iv, udp=False, bitrate=20) -> dict:
+    def _iperf_dut_rx(self, seconds, iv, udp=False, bitrate=40) -> dict:
         flag = " -u -b %d" % bitrate if udp else ""
         self.stop_iperf("dut", "reference")
         self.dut.send("iperf -s%s -i %d" % (" -u" if udp else "", iv), 2)
@@ -515,6 +518,14 @@ def verdicts(res: dict, thresholds: dict) -> list[dict]:
         floor = th_dut.get(thkey, 0)
         ok = avg >= floor
         detail = "%.2f Mbit/s avg (min %.2f, max %.2f) floor %.0f" % (avg, t["min"], t["max"], floor)
+        if key.startswith("udp"):
+            offer = cfg.get("durations", {}).get("udp_bitrate")
+            if offer:
+                detail += "; offered -b %d Mbit/s" % offer
+                if avg >= 0.9 * offer:
+                    detail += " - achieved tracks the offer, so the offer capped the result (raise -b)"
+                else:
+                    detail += " - link ceiling below the offer, so this is a real measurement"
         b = base.get(basekey) if basekey else None
         if b and b.get("avg"):
             ratio = avg / b["avg"]
@@ -607,11 +618,14 @@ def build_report(res: dict, V: list[dict]) -> str:
     L.append("| Test | DUT avg | min | max | reference baseline | ratio | official air | official shield |")
     L.append("|---|---|---|---|---|---|---|---|")
     base = ref.get("baseline", {})
+    udp_offer = cfg.get("durations", {}).get("udp_bitrate")
     for key, label, bk in (("tcp_tx", "TCP TX (DUT → ref)", "tcp_tx"),
                            ("tcp_rx", "TCP RX (ref → DUT)", "tcp_rx"),
                            ("udp_tx", "UDP TX (DUT → ref)", None),
                            ("udp_rx", "UDP RX (ref → DUT)", None)):
         t = tests.get(key) or {}
+        if key.startswith("udp") and udp_offer:
+            label += " @ `-b %d` offered" % udp_offer
         b = base.get(bk) if bk else None
         ratio = ("%.2f" % (t["avg"] / b["avg"])) if (t.get("avg") and b and b.get("avg")) else "—"
         L.append("| %s | %s | %s | %s | %s | %s | %s | %s |" % (
@@ -632,18 +646,37 @@ def build_report(res: dict, V: list[dict]) -> str:
               if dut_off.get("idf_commit") else "no published table for this chip",
               om.get("source", "")))
     sweep = tests.get("udp_tx_sweep")
+    if tests.get("udp_tx") or tests.get("udp_rx"):
+        L.append("")
+        L.append("`-b` is the **offered** UDP load, in Mbit/s: iperf never reports more than it was asked "
+                 "to send, so the UDP rows are only meaningful together with the offer shown. An offer "
+                 "below the link's real capacity caps the result; run at `-b 40` (above the 30 Mbit/s "
+                 "documented air figure) to measure the link instead of the offer.")
     if sweep:
         L.append("")
         L.append("### UDP offered-load sweep (DUT → ref, reference only)")
         L.append("")
-        L.append("| Offered | Achieved avg | min | max |")
-        L.append("|---|---|---|---|")
+        L.append("| Offered `-b` | Achieved avg | min | max | reading |")
+        L.append("|---|---|---|---|---|")
         for rate, s in sweep.items():
-            L.append("| %s Mbit/s | %s | %s | %s |" % (
+            achieved = s.get("avg")
+            if achieved:
+                if achieved >= 0.9 * float(rate):
+                    reading = "capped by the offer"
+                else:
+                    reading = "link ceiling"
+            else:
+                reading = "no data"
+            L.append("| %s Mbit/s | %s | %s | %s | %s |" % (
                 rate,
-                ("%.2f Mbit/s" % s["avg"]) if s.get("avg") else "no data",
+                ("%.2f Mbit/s" % achieved) if achieved else "no data",
                 ("%.2f" % s["min"]) if s.get("min") else "—",
-                ("%.2f" % s["max"]) if s.get("max") else "—"))
+                ("%.2f" % s["max"]) if s.get("max") else "—",
+                reading))
+        L.append("")
+        L.append("`-b` is the **offered load** in Mbit/s — iperf never reports more than it was asked to "
+                 "send, so `achieved ≈ offered` means the offer, not the link, set the number. Raise `-b` "
+                 "until the achieved value stops rising; that plateau is the link ceiling.")
     L.append("")
     if res.get("notes"):
         L.append("## Run log")
