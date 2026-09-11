@@ -3,10 +3,12 @@ name: execute-wifi-hw-test
 description: |
   Run the ESP32 WiFi hardware verification harness (esp32-wifi-hw-test) against a device under
   test and a known-good reference board, then judge whether the DUT's WiFi hardware is correct.
-  Covers: finding COM ports, building/flashing the vendored wifi/iperf firmware on both boards,
-  writing the run config, executing wifi_hw_test.py, reading the generated markdown report, and
-  the failure playbook (stale NVS, busy port, supplicant panics, DTR/RTS traps). Falls back to
-  docs/MANUAL_TESTING.md when the user wants to run the test by hand.
+  Covers: establishing the ESP-IDF v5.5.4 toolchain the USER has installed (ask for the paths and
+  validate them — the build depends on it and the repo cannot supply it), finding COM ports,
+  building/flashing the vendored wifi/iperf firmware on both boards, writing the run config,
+  executing wifi_hw_test.py, reading the generated markdown report, and the failure playbook
+  (stale NVS, busy port, supplicant panics, DTR/RTS traps). Falls back to docs/MANUAL_TESTING.md
+  when the user wants to run the test by hand.
 ---
 
 # Execute the WiFi hardware test
@@ -24,10 +26,11 @@ moment and writes a verdict report. It never flashes your product firmware.
 | DUT port + board name + chip | `python wifi_hw_test.py --list-ports`, ask the user, or read the ROM banner |
 | Reference port + board name + chip | same |
 | Firmware already on both boards? | ask; the firmware **source is in this repo** (`firmware/iperf-esp32s3/`, `firmware/iperf-esp32c6/`) and both build offline |
-| **ESP-IDF version** | must be **v5.5.4** (`idf.py --version`) — the version the vendored firmware and the reference results were built with; check before building |
-| IDF location | e.g. `D:\IDF_...\esp-idf`, tools root, venv python |
+| **ESP-IDF v5.5.4 install — where is it?** | **ask the user** (checkout, `IDF_TOOLS_PATH`, venv python) and validate all three — see **Step 0**. The build depends on an install that lives *outside* this repo; nothing here can substitute for it |
+| Which IDF version is it? | `idf.py --version` must print **ESP-IDF v5.5.4** — the version the vendored firmware and the reference results were built with |
 
 Do **not** guess ports. Two boards on the wrong ports produce a confident but meaningless report.
+Do **not** guess the IDF paths either — ask, then prove they work (Step 0).
 
 **Wrong IDF version is the most common self-inflicted failure**: building with e.g. v5.4.1 rewrites
 `firmware/*/dependencies.lock` (`version: 5.5.4` → `5.4.1`) and changes Wi-Fi behaviour, so the numbers
@@ -41,6 +44,41 @@ then rebuild with v5.5.4.
   (repo root → `docs/MANUAL_TESTING.md`) — the same test as two serial terminals plus the acceptance
   table. Offer this whenever the user says they want to build/flash/measure themselves, or when they
   don't want an agent driving their boards.
+
+## Step 0 — the ESP-IDF toolchain (ask the user, then prove it)
+
+Building and flashing depend on an **ESP-IDF v5.5.4 install that lives outside this repo**. The repo
+cannot supply it, so this is the one input you must get from the user before promising a run.
+
+**Ask for these three paths** (if `IDF_PATH`, `IDF_TOOLS_PATH`, `IDF_PYTHON_ENV_PATH` are already set
+in a shell, show the user those values and ask them to confirm instead of asking blind):
+
+| Ask for | Typical value on this machine | Prove it with |
+|---|---|---|
+| ESP-IDF checkout | `D:\IDF_5_5_AI\.espressif\v5.5.4\esp-idf` | `export.ps1` exists **and** `git -C <idf> describe --tags` → `v5.5.4` |
+| `IDF_TOOLS_PATH` (tools root) | `C:\Espressif` | directory exists, holds `tools\` — **no spaces anywhere in the path** |
+| `IDF_PYTHON_ENV_PATH` (venv) | `C:\Espressif\tools\python\v5.5.4\venv` | `Scripts\python.exe` exists |
+
+Then activate it in the shell you build from and check the version:
+
+```powershell
+$env:IDF_TOOLS_PATH='C:\Espressif'
+$env:IDF_PYTHON_ENV_PATH='C:\Espressif\tools\python\v5.5.4\venv'
+$env:IDF_PYTHON_CHECK_CONSTRAINTS='no'
+. "D:\IDF_5_5_AI\.espressif\v5.5.4\esp-idf\export.ps1"
+idf.py --version          # must print: ESP-IDF v5.5.4
+```
+
+- **Version must be v5.5.4.** Another version rewrites `firmware/*/dependencies.lock`
+  (`version: 5.5.4` → `5.4.1`) and changes Wi-Fi behaviour, so the numbers stop being comparable to
+  the committed reference run.
+- **If the user has no ESP-IDF installed:** the build/flash path is impossible until they install
+  v5.5.4 (Espressif installer, or `git clone -b v5.5.4 --recursive` + `install.ps1`). Say so plainly
+  and offer the alternative: they flash the vendored firmware themselves and you run the test on the
+  already-flashed boards, or they follow `docs/MANUAL_TESTING.md`.
+- **Check the ports too, not just the build:** flashing needs the COM port free (§ failure playbook 1).
+- **Record what you used** — checkout path and `idf.py --version` — in the report you hand back, next
+  to the harness's own provenance lines (it prints the IDF/wifi-firmware/PHY from each board).
 
 ## Steps
 
@@ -125,8 +163,15 @@ and quote the IDF version the numbers came from.
 5. **`iperf: invalid argument "20M"`** → `-b` wants a bare number in Mbit/s: `-b 40`. Remember `-b` is
    the **offered** load, so a value below the expected capacity produces a capped, misleading UDP
    result — see the UDP rule above.
-6. **Wrong ESP-IDF version** (build errors, or `dependencies.lock` rewritten to e.g. `5.4.1`) →
-   `idf.py fullclean`, delete `sdkconfig`, `git checkout -- dependencies.lock`, rebuild with v5.5.4.
+6. **Wrong ESP-IDF version, or no working IDF at all** →
+   - `idf.py: command not found` / `idf.py` errors about a missing toolchain → the shell was not
+     activated: run the Step 0 block first (`. <idf>\export.ps1`).
+   - `cc1.exe: fatal error: Both 'XTENSA_GNU_CONFIG' and "-dynconfig=" specified but pointed
+     different files` → `IDF_TOOLS_PATH` (or the IDF checkout) sits under a path **with a space**, e.g.
+     `C:\Users\Abdus Salam\.espressif`: ninja passes the compiler in 8.3 short form and the xtensa
+     driver gives up. Move the tools root somewhere space-free (e.g. `C:\Espressif`) and rebuild.
+   - `dependencies.lock` rewritten to e.g. `5.4.1` → `idf.py fullclean`, delete `sdkconfig`,
+     `git checkout -- dependencies.lock`, rebuild with v5.5.4.
 7. **Impossible throughput (e.g. 1000+ Mbit/s)** → a leftover iperf server from an earlier run; the
    parser drops summaries whose interval does not match, but don't hand-copy raw lines.
 
